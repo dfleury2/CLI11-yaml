@@ -9,6 +9,7 @@ set(CMAKE_CXX_EXTENSION OFF)
 
 find_package(CLI11 CONFIG REQUIRED)
 find_package(Catch2 CONFIG REQUIRED)
+find_package(yaml-cpp CONFIG REQUIRED)
 
 add_library(cli11-yaml
     ../include/cli11-yaml/cli11-yaml.hpp
@@ -22,7 +23,7 @@ target_include_directories(cli11-yaml
     $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
 )
 
-target_link_libraries(cli11-yaml PUBLIC CLI11::CLI11)
+target_link_libraries(cli11-yaml PUBLIC CLI11::CLI11 yaml-cpp)
 
 
 
