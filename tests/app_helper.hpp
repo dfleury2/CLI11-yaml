@@ -46,6 +46,21 @@ public:
     const char *c_str() const { return _name.c_str(); }
 };
 
+
+class Stream
+{
+public:
+    Stream(const std::string& str) { stream << str; }
+
+    operator std::istream&() {
+        stream.seekg(0, std::ios::beg);
+        return stream;
+    }
+
+private:
+    std::stringstream stream;
+};
+
 inline void put_env(std::string name, std::string value) {
 #ifdef _WIN32
     _putenv_s(name.c_str(), value.c_str());
