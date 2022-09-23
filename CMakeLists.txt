@@ -7,7 +7,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSION OFF)
 
-find_package(CLI11 CONFIG REQUIRED)
 find_package(Catch2 CONFIG REQUIRED)
 find_package(yaml-cpp CONFIG REQUIRED)
 
@@ -23,7 +22,7 @@ target_include_directories(cli11-yaml
     $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
 )
 
-target_link_libraries(cli11-yaml PUBLIC CLI11::CLI11 yaml-cpp)
+target_link_libraries(cli11-yaml PUBLIC yaml-cpp)
 
 
 

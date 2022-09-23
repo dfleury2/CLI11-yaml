@@ -1,5 +1,4 @@
 [requires]
-cli11/2.2.0@
 catch2/3.1.0@
 yaml-cpp/0.7.0@
 
