@@ -1,5 +1,6 @@
 add_executable(cli11yaml-test
     app_helper.hpp
+    ConfigFileTest.cpp
     ConfigYamlTest.cpp
 )
 

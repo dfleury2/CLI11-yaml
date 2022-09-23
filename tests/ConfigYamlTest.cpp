@@ -759,7 +759,7 @@ TEST_CASE_METHOD(TApp, "Yaml IniShort", "[config]") {
 //    CHECK(cfgOption->as<std::string>() == "../TestIniTmp.ini");
 //}
 
-TEST_CASE_METHOD(TApp, "IniPositional", "[config]") {
+TEST_CASE_METHOD(TApp, "Yaml IniPositional", "[config]") {
 
     TempFile tempYaml{"TestYamlTmp.yaml"};
 
