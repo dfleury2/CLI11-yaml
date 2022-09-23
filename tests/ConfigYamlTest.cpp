@@ -24,15 +24,18 @@ operator==(const CLI::ConfigItem& lh, const CLI::ConfigItem& rh) {
 inline std::ostream&
 operator<<(std::ostream& os, const ConfigItem& item) {
     auto join = [&os](const char* name, const std::vector<std::string>& v) {
-        if (!v.empty()) { os << "\n - " << name << ": "; }
-        for(size_t i = 0; i < v.size(); ++i) {
-            os << (i?", ": "") << v[i];
+        if (!v.empty()) {
+            os << "\n - " << name << ": [";
+            for (size_t i = 0; i < v.size(); ++i) {
+                os << (i ? ", " : "") << v[i];
+            }
+            os << "]";
         }
     };
 
     os << "[";
     join("parents", item.parents);
-    os << "\n - name: [" << item.name << "]";
+    os << "\n - name: " << item.name;
     join("inputs", item.inputs);
     os << "\n]";
     return os;
