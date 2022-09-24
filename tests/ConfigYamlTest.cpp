@@ -250,359 +250,347 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
     CHECK(outputIni == outputYaml);
 }
 
-//TEST_CASE("Yaml: StringBased: LayersSkipOrdered", "[config]")
-//{
-//    std::stringstream ofile;
-//
-//    ofile << "simple = true\n\n";
-//    ofile << "[other.sub2.sub-level2.sub-level3]\n";
-//    ofile << "[other.sub2]\n";
-//    ofile << "absolute_newest = true\n";
-//    ofile.seekg(0, std::ios::beg);
-//
-//    std::vector<CLI::ConfigItem> output = CLI::ConfigINI().from_config(ofile);
-//
-//    // 2 flags and 4 openings and 4 closings
-//    CHECK(output.size() == 12u);
-//    CHECK(checkSections(output));
-//}
-//
-//TEST_CASE("Yaml: StringBased: LayersChange", "[config]")
-//{
-//    std::stringstream ofile;
-//
-//    ofile << "simple = true\n\n";
-//    ofile << "[other.sub2]\n";
-//    ofile << "[other.sub3]\n";
-//    ofile << "absolute_newest = true\n";
-//    ofile.seekg(0, std::ios::beg);
-//
-//    std::vector<CLI::ConfigItem> output = CLI::ConfigINI().from_config(ofile);
-//
-//    // 2 flags and 3 openings and 3 closings
-//    CHECK(output.size() == 8u);
-//    CHECK(checkSections(output));
-//}
-//
-//TEST_CASE("Yaml: StringBased: Layers2LevelChange", "[config]")
-//{
-//    std::stringstream ofile;
-//
-//    ofile << "simple = true\n\n";
-//    ofile << "[other.sub2.cmd]\n";
-//    ofile << "[other.sub3.cmd]\n";
-//    ofile << "absolute_newest = true\n";
-//    ofile.seekg(0, std::ios::beg);
-//
-//    std::vector<CLI::ConfigItem> output = CLI::ConfigINI().from_config(ofile);
-//
-//    // 2 flags and 5 openings and 5 closings
-//    CHECK(output.size() == 12u);
-//    CHECK(checkSections(output));
-//}
-//
-//TEST_CASE("Yaml: StringBased: Layers3LevelChange", "[config]")
-//{
-//    std::stringstream ofile;
-//
-//    ofile << "[other.sub2.subsub.cmd]\n";
-//    ofile << "[other.sub3.subsub.cmd]\n";
-//    ofile << "absolute_newest = true\n";
-//    ofile.seekg(0, std::ios::beg);
-//
-//    std::vector<CLI::ConfigItem> output = CLI::ConfigINI().from_config(ofile);
-//
-//    // 1 flags and 7 openings and 7 closings
-//    CHECK(output.size() == 15u);
-//    CHECK(checkSections(output));
-//}
-//
-//TEST_CASE("Yaml: StringBased: newSegment", "[config]")
-//{
-//    std::stringstream ofile;
-//
-//    ofile << "[other.sub2.subsub.cmd]\n";
-//    ofile << "flag = true\n";
-//    ofile << "[another]\n";
-//    ofile << "absolute_newest = true\n";
-//    ofile.seekg(0, std::ios::beg);
-//
-//    std::vector<CLI::ConfigItem> output = CLI::ConfigINI().from_config(ofile);
-//
-//    // 2 flags and 5 openings and 5 closings
-//    CHECK(output.size() == 12u);
-//    CHECK(checkSections(output));
-//}
-//
-//TEST_CASE("Yaml: StringBased: LayersDirect", "[config]")
-//{
-//    std::stringstream ofile;
-//
-//    ofile << "simple = true\n\n";
-//    ofile << "[other.sub2.sub-level2.sub-level3]\n";
-//    ofile << "absolute_newest = true\n";
-//
-//    ofile.seekg(0, std::ios::beg);
-//
-//    std::vector<CLI::ConfigItem> output = CLI::ConfigINI().from_config(ofile);
-//
-//    // 2 flags and 4 openings and 4 closings
-//    CHECK(output.size() == 10u);
-//    CHECK(checkSections(output));
-//}
-//
-//TEST_CASE("Yaml: StringBased: LayersComplex", "[config]")
-//{
-//    std::stringstream ofile;
-//
-//    ofile << "simple = true\n\n";
-//    ofile << "[other.sub2.sub-level2.sub-level3]\n";
-//    ofile << "absolute_newest = true\n";
-//    ofile << "[other.sub2.sub-level2]\n";
-//    ofile << "still_newer = true\n";
-//    ofile << "[other.sub2]\n";
-//    ofile << "newest = true\n";
-//
-//    ofile.seekg(0, std::ios::beg);
-//
-//    std::vector<CLI::ConfigItem> output = CLI::ConfigINI().from_config(ofile);
-//
-//    // 4 flags and 6 openings and 6 closings
-//    CHECK(output.size() == 16u);
-//    CHECK(checkSections(output));
-//}
-//
-//TEST_CASE("Yaml: StringBased: file_error", "[config]")
-//{
-//    CHECK_THROWS_AS(CLI::ConfigINI().from_file("nonexist_file"), CLI::FileError);
-//}
-//
-//TEST_CASE_METHOD(TApp, "IniNotRequired", "[config]")
-//{
-//
-//    TempFile tmpini{"TestIniTmp.ini"};
-//
-//    app.set_config("--config", tmpini);
-//
-//    {
-//        std::ofstream out{tmpini};
-//        out << "[default]" << std::endl;
-//        out << "two=99" << std::endl;
-//        out << "three=3" << std::endl;
-//    }
-//
-//    int one = 0, two = 0, three = 0;
-//    app.add_option("--one", one);
-//    app.add_option("--two", two);
-//    app.add_option("--three", three);
-//
-//    args = {"--one=1"};
-//
-//    run();
-//
-//    CHECK(one == 1);
-//    CHECK(two == 99);
-//    CHECK(three == 3);
-//
-//    one = two = three = 0;
-//    args = {"--one=1", "--two=2"};
-//
-//    run();
-//
-//    CHECK(one == 1);
-//    CHECK(two == 2);
-//    CHECK(three == 3);
-//    CHECK("TestIniTmp.ini" == app["--config"]->as<std::string>());
-//}
-//
-//TEST_CASE_METHOD(TApp, "IniSuccessOnUnknownOption", "[config]")
-//{
-//    TempFile tmpini{"TestIniTmp.ini"};
-//
-//    app.set_config("--config", tmpini);
-//    app.allow_config_extras(true);
-//
-//    {
-//        std::ofstream out{tmpini};
-//        out << "three=3" << std::endl;
-//        out << "two=99" << std::endl;
-//    }
-//
-//    int two{0};
-//    app.add_option("--two", two);
-//    run();
-//    CHECK(two == 99);
-//}
-//
-//TEST_CASE_METHOD(TApp, "IniGetRemainingOption", "[config]")
-//{
-//    TempFile tmpini{"TestIniTmp.ini"};
-//
-//    app.set_config("--config", tmpini);
-//    app.allow_config_extras(true);
-//
-//    std::string ExtraOption = "three";
-//    std::string ExtraOptionValue = "3";
-//    {
-//        std::ofstream out{tmpini};
-//        out << ExtraOption << "=" << ExtraOptionValue << std::endl;
-//        out << "two=99" << std::endl;
-//    }
-//
-//    int two{0};
-//    app.add_option("--two", two);
-//    REQUIRE_NOTHROW(run());
-//    std::vector<std::string> ExpectedRemaining = {ExtraOption};
-//    CHECK(ExpectedRemaining == app.remaining());
-//}
-//
-//TEST_CASE_METHOD(TApp, "IniGetNoRemaining", "[config]")
-//{
-//    TempFile tmpini{"TestIniTmp.ini"};
-//
-//    app.set_config("--config", tmpini);
-//    app.allow_config_extras(true);
-//
-//    {
-//        std::ofstream out{tmpini};
-//        out << "two=99" << std::endl;
-//    }
-//
-//    int two{0};
-//    app.add_option("--two", two);
-//    REQUIRE_NOTHROW(run());
-//    CHECK(app.remaining().empty());
-//}
-//
-//TEST_CASE_METHOD(TApp, "IniRequiredNoDefault", "[config]")
-//{
-//
-//    app.set_config("--config")->required();
-//
-//    int two{0};
-//    app.add_option("--two", two);
-//    REQUIRE_THROWS_AS(run(), CLI::FileError);
-//    // test to make sure help still gets called correctly
-//    // GitHub issue #533 https://github.com/CLIUtils/CLI11/issues/553
-//    args = {"--help"};
-//    REQUIRE_THROWS_AS(run(), CLI::CallForHelp);
-//}
-//
-//TEST_CASE_METHOD(TApp, "IniNotRequiredNoDefault", "[config]")
-//{
-//
-//    app.set_config("--config");
-//
-//    int two{0};
-//    app.add_option("--two", two);
-//    REQUIRE_NOTHROW(run());
-//}
-//
-///// Define a class for testing purposes that does bad things
-//class EvilConfig : public CLI::Config {
-//public:
-//    EvilConfig() = default;
-//
-//    std::string to_config(const CLI::App*, bool, bool, std::string) const override { throw CLI::FileError("evil"); }
-//
-//    std::vector<CLI::ConfigItem> from_config(std::istream&) const override { throw CLI::FileError("evil"); }
-//};
-//
-//TEST_CASE_METHOD(TApp, "IniRequiredbadConfigurator", "[config]")
-//{
-//
-//    TempFile tmpini{"TestIniTmp.ini"};
-//
-//    {
-//        std::ofstream out{tmpini};
-//        out << "[default]" << std::endl;
-//        out << "two=99" << std::endl;
-//        out << "three=3" << std::endl;
-//    }
-//
-//    app.set_config("--config", tmpini)->required();
-//    app.config_formatter(std::make_shared<EvilConfig>());
-//    int two{0};
-//    app.add_option("--two", two);
-//    REQUIRE_THROWS_AS(run(), CLI::FileError);
-//}
-//
-//TEST_CASE_METHOD(TApp, "IniNotRequiredbadConfigurator", "[config]")
-//{
-//
-//    TempFile tmpini{"TestIniTmp.ini"};
-//
-//    {
-//        std::ofstream out{tmpini};
-//        out << "[default]" << std::endl;
-//        out << "two=99" << std::endl;
-//        out << "three=3" << std::endl;
-//    }
-//
-//    app.set_config("--config", tmpini);
-//    app.config_formatter(std::make_shared<EvilConfig>());
-//    int two{0};
-//    app.add_option("--two", two);
-//    REQUIRE_NOTHROW(run());
-//}
-//
-//TEST_CASE_METHOD(TApp, "IniNotRequiredNotDefault", "[config]")
-//{
-//
-//    TempFile tmpini{"TestIniTmp.ini"};
-//    TempFile tmpini2{"TestIniTmp2.ini"};
-//
-//    app.set_config("--config", tmpini);
-//
-//    {
-//        std::ofstream out{tmpini};
-//        out << "[default]" << std::endl;
-//        out << "two=99" << std::endl;
-//        out << "three=3" << std::endl;
-//    }
-//
-//    {
-//        std::ofstream out{tmpini2};
-//        out << "[default]" << std::endl;
-//        out << "two=98" << std::endl;
-//        out << "three=4" << std::endl;
-//    }
-//
-//    int one{0}, two{0}, three{0};
-//    app.add_option("--one", one);
-//    app.add_option("--two", two);
-//    app.add_option("--three", three);
-//
-//    run();
-//    CHECK(tmpini.c_str() == app["--config"]->as<std::string>());
-//    CHECK(two == 99);
-//    CHECK(three == 3);
-//
-//    args = {"--config", tmpini2};
-//    run();
-//
-//    CHECK(two == 98);
-//    CHECK(three == 4);
-//    CHECK(tmpini2.c_str() == app.get_config_ptr()->as<std::string>());
-//}
-//
-//TEST_CASE_METHOD(TApp, "MultiConfig", "[config]")
+TEST_CASE("Yaml: StringBased: LayersSkipOrdered", "[config]")
+{
+    auto outputIni = CLI::ConfigINI().from_config(
+            Stream{"simple = true\n\n"
+                   "[other.sub2.sub-level2.sub-level3]\n"
+                   "[other.sub2]\n"
+                   "absolute_newest = true\n"
+            });
+
+    auto outputYaml = CLI::ConfigYAML().from_config(
+            Stream{"simple: true\n\n"
+                   "other:\n"
+                   "  sub2:\n"
+                   "    sub-level2:\n"
+                   "      sub-level3:\n"
+                   "other:\n"
+                   "  sub2:\n"
+                   "    absolute_newest: true\n"
+            });
+
+    CHECK(outputIni == outputYaml);
+}
+
+TEST_CASE("Yaml: StringBased: LayersChange", "[config]")
+{
+    auto outputIni = CLI::ConfigINI().from_config(
+            Stream{"simple = true\n\n"
+                   "[other.sub2]\n"
+                   "[other.sub3]\n"
+                   "absolute_newest = true\n"
+            });
+
+    auto outputYaml = CLI::ConfigYAML().from_config(
+            Stream{"simple: true\n\n"
+                   "other:\n"
+                   "  sub2:\n"
+                   "other:\n"
+                   "  sub3:\n"
+                   "    absolute_newest: true\n"
+            });
+
+    CHECK(outputIni == outputYaml);
+}
+
+TEST_CASE("Yaml: StringBased: Layers2LevelChange", "[config]")
+{
+    auto outputIni = CLI::ConfigINI().from_config(
+            Stream{"simple = true\n\n"
+                   "[other.sub2.cmd]\n"
+                   "[other.sub3.cmd]\n"
+                   "absolute_newest = true\n"
+            });
+
+    auto outputYaml = CLI::ConfigYAML().from_config(
+            Stream{"simple: true\n\n"
+                   "other:\n"
+                   "  sub2:\n"
+                   "    cmd:\n"
+                   "  sub3:\n"
+                   "    cmd:\n"
+                   "      absolute_newest: true\n"
+            });
+
+    CHECK(outputIni == outputYaml);
+}
+
+TEST_CASE("Yaml: StringBased: Layers3LevelChange", "[config]")
+{
+    auto outputIni = CLI::ConfigINI().from_config(
+            Stream{"[other.sub2.subsub.cmd]\n"
+                   "[other.sub3.subsub.cmd]\n"
+                   "absolute_newest = true\n"
+            });
+
+    auto outputYaml = CLI::ConfigYAML().from_config(
+            Stream{"other:\n"
+                   "  sub2:\n"
+                   "    subsub:\n"
+                   "      cmd:\n"
+                   "  sub3:\n"
+                   "    subsub:\n"
+                   "      cmd:\n"
+                   "        absolute_newest: true\n"
+            });
+
+    CHECK(outputIni == outputYaml);
+}
+
+TEST_CASE("Yaml: StringBased: newSegment", "[config]")
+{
+    auto outputIni = CLI::ConfigINI().from_config(
+            Stream{"[other.sub2.subsub.cmd]\n"
+                   "flag = true\n"
+                   "[another]\n"
+                   "absolute_newest = true\n"
+            });
+
+    auto outputYaml = CLI::ConfigYAML().from_config(
+            Stream{"other:\n"
+                   "  sub2:\n"
+                   "    subsub:\n"
+                   "      cmd:\n"
+                   "        flag: true\n"
+                   "another:\n"
+                   "  absolute_newest: true\n"
+            });
+
+    CHECK(outputIni == outputYaml);
+}
+
+TEST_CASE("Yaml: StringBased: LayersDirect", "[config]")
+{
+    auto outputIni = CLI::ConfigINI().from_config(
+            Stream{"simple = true\n\n"
+                   "[other.sub2.sub-level2.sub-level3]\n"
+                   "absolute_newest = true\n"
+            });
+
+    auto outputYaml = CLI::ConfigYAML().from_config(
+            Stream{"simple: true\n\n"
+                   "other:\n"
+                   "  sub2:\n"
+                   "    sub-level2:\n"
+                   "      sub-level3:\n"
+                   "        absolute_newest: true\n"
+            });
+
+    CHECK(outputIni == outputYaml);
+}
+
+TEST_CASE("Yaml: StringBased: LayersComplex", "[config]")
+{
+    auto outputIni = CLI::ConfigINI().from_config(
+            Stream{"simple = true\n\n"
+                   "[other.sub2.sub-level2.sub-level3]\n"
+                   "absolute_newest = true\n"
+                   "[other.sub2.sub-level2]\n"
+                   "still_newer = true\n"
+                   "[other.sub2]\n"
+                   "newest = true\n"
+            });
+
+    auto outputYaml = CLI::ConfigYAML().from_config(
+            Stream{"simple: true\n\n"
+                   "other:\n"
+                   "  sub2:\n"
+                   "    sub-level2:\n"
+                   "      sub-level3:\n"
+                   "        absolute_newest: true\n"
+                   "      still_newer: true\n"
+                   "    newest: true\n"
+            });
+
+    CHECK(outputIni == outputYaml);
+}
+
+TEST_CASE("Yaml: StringBased: file_error", "[config]")
+{
+    CHECK_THROWS_AS(CLI::ConfigYAML().from_file("nonexist_file"), CLI::FileError);
+}
+
+TEST_CASE_METHOD(TApp, "YamlNotRequired", "[config]")
+{
+    TempFile tmpYaml{"TestYamlTmp.yaml"};
+
+    app.set_config("--config", tmpYaml);
+    app.config_formatter(std::make_shared<CLI::ConfigYAML>());
+
+    {
+        std::ofstream out{tmpYaml};
+        out << "two: 99" << std::endl;
+        out << "three: 3" << std::endl;
+    }
+
+    int one = 0, two = 0, three = 0;
+    app.add_option("--one", one);
+    app.add_option("--two", two);
+    app.add_option("--three", three);
+
+    args = {"--one=1"};
+
+    run();
+
+    CHECK(one == 1);
+    CHECK(two == 99);
+    CHECK(three == 3);
+
+    one = two = three = 0;
+    args = {"--one=1", "--two=2"};
+
+    run();
+
+    CHECK(one == 1);
+    CHECK(two == 2);
+    CHECK(three == 3);
+    CHECK("TestYamlTmp.yaml" == app["--config"]->as<std::string>());
+}
+
+TEST_CASE_METHOD(TApp, "YamlSuccessOnUnknownOption", "[config]")
+{
+    TempFile tmpYaml{"TestYamlTmp.yaml"};
+
+    app.set_config("--config", tmpYaml);
+    app.config_formatter(std::make_shared<CLI::ConfigYAML>());
+    app.allow_config_extras(true);
+
+    {
+        std::ofstream out{tmpYaml};
+        out << "three: 3" << std::endl;
+        out << "two: 99" << std::endl;
+    }
+
+    int two{0};
+    app.add_option("--two", two);
+    run();
+    CHECK(two == 99);
+}
+
+TEST_CASE_METHOD(TApp, "YamlGetRemainingOption", "[config]")
+{
+    TempFile tmpYaml{"TestYamlTmp.yaml"};
+
+    app.set_config("--config", tmpYaml);
+    app.config_formatter(std::make_shared<CLI::ConfigYAML>());
+    app.allow_config_extras(true);
+
+    std::string ExtraOption = "three";
+    std::string ExtraOptionValue = "3";
+    {
+        std::ofstream out{tmpYaml};
+        out << ExtraOption << ": " << ExtraOptionValue << std::endl;
+        out << "two: 99" << std::endl;
+    }
+
+    int two{0};
+    app.add_option("--two", two);
+    REQUIRE_NOTHROW(run());
+    std::vector<std::string> ExpectedRemaining = {ExtraOption};
+    CHECK(ExpectedRemaining == app.remaining());
+}
+
+TEST_CASE_METHOD(TApp, "YamlGetNoRemaining", "[config]")
+{
+    TempFile tmpYaml{"TestYamlTmp.yaml"};
+
+    app.set_config("--config", tmpYaml);
+    app.config_formatter(std::make_shared<CLI::ConfigYAML>());
+    app.allow_config_extras(true);
+
+    {
+        std::ofstream out{tmpYaml};
+        out << "two: 99" << std::endl;
+    }
+
+    int two{0};
+    app.add_option("--two", two);
+    REQUIRE_NOTHROW(run());
+    CHECK(app.remaining().empty());
+}
+
+TEST_CASE_METHOD(TApp, "YamlRequiredNoDefault", "[config]")
+{
+    app.set_config("--config")->required();
+    app.config_formatter(std::make_shared<CLI::ConfigYAML>());
+
+    int two{0};
+    app.add_option("--two", two);
+    REQUIRE_THROWS_AS(run(), CLI::FileError);
+    // test to make sure help still gets called correctly
+    // GitHub issue #533 https://github.com/CLIUtils/CLI11/issues/553
+    args = {"--help"};
+    REQUIRE_THROWS_AS(run(), CLI::CallForHelp);
+}
+
+TEST_CASE_METHOD(TApp, "YamlNotRequiredNoDefault", "[config]")
+{
+
+    app.set_config("--config");
+    app.config_formatter(std::make_shared<CLI::ConfigYAML>());
+
+    int two{0};
+    app.add_option("--two", two);
+    REQUIRE_NOTHROW(run());
+}
+
+TEST_CASE_METHOD(TApp, "YamlNotRequiredNotDefault", "[config]")
+{
+
+    TempFile tmpYaml{"TestYamlTmp.yaml"};
+    TempFile tmpYaml2{"TestYamlTmp2.yaml"};
+
+    app.set_config("--config", tmpYaml);
+    app.config_formatter(std::make_shared<CLI::ConfigYAML>());
+
+    {
+        std::ofstream out{tmpYaml};
+        out << "two: 99" << std::endl;
+        out << "three: 3" << std::endl;
+    }
+
+    {
+        std::ofstream out{tmpYaml2};
+        out << "two: 98" << std::endl;
+        out << "three: 4" << std::endl;
+    }
+
+    int one{0}, two{0}, three{0};
+    app.add_option("--one", one);
+    app.add_option("--two", two);
+    app.add_option("--three", three);
+
+    run();
+    CHECK(tmpYaml.c_str() == app["--config"]->as<std::string>());
+    CHECK(two == 99);
+    CHECK(three == 3);
+
+    args = {"--config", tmpYaml2};
+    run();
+
+    CHECK(two == 98);
+    CHECK(three == 4);
+    CHECK(tmpYaml2.c_str() == app.get_config_ptr()->as<std::string>());
+}
+
+//TEST_CASE_METHOD(TApp, "Yaml: MultiConfig", "[config]")
 //{
 //
-//    TempFile tmpini{"TestIniTmp.ini"};
-//    TempFile tmpini2{"TestIniTmp2.ini"};
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
+//    TempFile tmpYaml2{"TestYamlTmp2.yaml"};
 //
 //    app.set_config("--config")->expected(1, 3);
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "[default]" << std::endl;
 //        out << "two=99" << std::endl;
 //        out << "three=3" << std::endl;
 //    }
 //
 //    {
-//        std::ofstream out{tmpini2};
+//        std::ofstream out{tmpYaml2};
 //        out << "[default]" << std::endl;
 //        out << "one=55" << std::endl;
 //        out << "three=4" << std::endl;
@@ -613,14 +601,14 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    app.add_option("--two", two);
 //    app.add_option("--three", three);
 //
-//    args = {"--config", tmpini2, "--config", tmpini};
+//    args = {"--config", tmpYaml2, "--config", tmpYaml};
 //    run();
 //
 //    CHECK(two == 99);
 //    CHECK(three == 3);
 //    CHECK(one == 55);
 //
-//    args = {"--config", tmpini, "--config", tmpini2};
+//    args = {"--config", tmpYaml, "--config", tmpYaml2};
 //    run();
 //
 //    CHECK(two == 99);
@@ -628,23 +616,23 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(one == 55);
 //}
 //
-//TEST_CASE_METHOD(TApp, "MultiConfig_single", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: MultiConfig_single", "[config]")
 //{
 //
-//    TempFile tmpini{"TestIniTmp.ini"};
-//    TempFile tmpini2{"TestIniTmp2.ini"};
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
+//    TempFile tmpYaml2{"TestYamlTmp2.yaml"};
 //
 //    app.set_config("--config")->multi_option_policy(CLI::MultiOptionPolicy::TakeLast);
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "[default]" << std::endl;
 //        out << "two=99" << std::endl;
 //        out << "three=3" << std::endl;
 //    }
 //
 //    {
-//        std::ofstream out{tmpini2};
+//        std::ofstream out{tmpYaml2};
 //        out << "[default]" << std::endl;
 //        out << "one=55" << std::endl;
 //        out << "three=4" << std::endl;
@@ -655,7 +643,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    app.add_option("--two", two);
 //    app.add_option("--three", three);
 //
-//    args = {"--config", tmpini2, "--config", tmpini};
+//    args = {"--config", tmpYaml2, "--config", tmpYaml};
 //    run();
 //
 //    CHECK(two == 99);
@@ -663,7 +651,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(one == 0);
 //
 //    two = 0;
-//    args = {"--config", tmpini, "--config", tmpini2};
+//    args = {"--config", tmpYaml, "--config", tmpYaml2};
 //    run();
 //
 //    CHECK(two == 0);
@@ -671,7 +659,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(one == 55);
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniRequiredNotFound", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlRequiredNotFound", "[config]")
 //{
 //
 //    std::string noini = "TestIniNotExist.ini";
@@ -680,7 +668,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THROWS_AS(run(), CLI::FileError);
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniNotRequiredPassedNotFound", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlNotRequiredPassedNotFound", "[config]")
 //{
 //
 //    std::string noini = "TestIniNotExist.ini";
@@ -690,12 +678,12 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THROWS_AS(run(), CLI::FileError);
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniOverwrite", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlOverwrite", "[config]")
 //{
 //
-//    TempFile tmpini{"TestIniTmp.ini"};
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "[default]" << std::endl;
 //        out << "two=99" << std::endl;
 //    }
@@ -713,15 +701,15 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(two == 99);
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniRequired", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlRequired", "[config]")
 //{
 //
-//    TempFile tmpini{"TestIniTmp.ini"};
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
 //
-//    app.set_config("--config", tmpini, "", true);
+//    app.set_config("--config", tmpYaml, "", true);
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "[default]" << std::endl;
 //        out << "two=99" << std::endl;
 //        out << "three=3" << std::endl;
@@ -756,16 +744,16 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THROWS_AS(run(), CLI::RequiredError);
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniInlineComment", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlInlineComment", "[config]")
 //{
 //
-//    TempFile tmpini{"TestIniTmp.ini"};
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
 //
-//    app.set_config("--config", tmpini, "", true);
+//    app.set_config("--config", tmpYaml, "", true);
 //    app.config_formatter(std::make_shared<CLI::ConfigINI>());
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "[default]" << std::endl;
 //        out << "two=99 ; this is a two" << std::endl;
 //        out << "three=3; this is a three" << std::endl;
@@ -800,15 +788,15 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THROWS_AS(run(), CLI::RequiredError);
 //}
 //
-//TEST_CASE_METHOD(TApp, "TomlInlineComment", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: TomlInlineComment", "[config]")
 //{
 //
-//    TempFile tmpini{"TestIniTmp.ini"};
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
 //
-//    app.set_config("--config", tmpini, "", true);
+//    app.set_config("--config", tmpYaml, "", true);
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "[default]" << std::endl;
 //        out << "two=99 # this is a two" << std::endl;
 //        out << "three=3# this is a three" << std::endl;
@@ -843,7 +831,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THROWS_AS(run(), CLI::RequiredError);
 //}
 //
-//TEST_CASE_METHOD(TApp, "ConfigModifiers", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: ConfigModifiers", "[config]")
 //{
 //
 //    app.set_config("--config", "test.ini", "", true);
@@ -867,15 +855,15 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(cfgptr->index() == 7);
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniVector", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlVector", "[config]")
 //{
 //
-//    TempFile tmpini{"TestIniTmp.ini"};
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
 //
-//    app.set_config("--config", tmpini);
+//    app.set_config("--config", tmpYaml);
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "[default]" << std::endl;
 //        out << "two=2 3" << std::endl;
 //        out << "three=1 2 3" << std::endl;
@@ -891,7 +879,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(three == std::vector<int>({1, 2, 3}));
 //}
 //
-//TEST_CASE_METHOD(TApp, "TOMLVector", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: TOMLVector", "[config]")
 //{
 //
 //    TempFile tmptoml{"TestTomlTmp.toml"};
@@ -916,15 +904,15 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(three == std::vector<int>({1, 2, 3}));
 //}
 //
-//TEST_CASE_METHOD(TApp, "ColonValueSep", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: ColonValueSep", "[config]")
 //{
 //
-//    TempFile tmpini{"TestIniTmp.ini"};
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
 //
-//    app.set_config("--config", tmpini);
+//    app.set_config("--config", tmpYaml);
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "#this is a comment line\n";
 //        out << "[default]\n";
 //        out << "two:2\n";
@@ -943,17 +931,17 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(three == 3);
 //}
 //
-//TEST_CASE_METHOD(TApp, "TOMLVectordirect", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: TOMLVectordirect", "[config]")
 //{
 //
-//    TempFile tmpini{"TestIniTmp.ini"};
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
 //
-//    app.set_config("--config", tmpini);
+//    app.set_config("--config", tmpYaml);
 //
 //    app.config_formatter(std::make_shared<CLI::ConfigTOML>());
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "#this is a comment line\n";
 //        out << "[default]\n";
 //        out << "two=[2,3]\n";
@@ -970,7 +958,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(three == std::vector<int>({1, 2, 3}));
 //}
 //
-//TEST_CASE_METHOD(TApp, "TOMLStringVector", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: TOMLStringVector", "[config]")
 //{
 //
 //    TempFile tmptoml{"TestTomlTmp.toml"};
@@ -1011,15 +999,15 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(three == std::vector<std::string>({"1", "2", "3"}));
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniVectorCsep", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlVectorCsep", "[config]")
 //{
 //
-//    TempFile tmpini{"TestIniTmp.ini"};
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
 //
-//    app.set_config("--config", tmpini);
+//    app.set_config("--config", tmpYaml);
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "#this is a comment line\n";
 //        out << "[default]\n";
 //        out << "zero1=[]\n";
@@ -1045,15 +1033,15 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(three == std::vector<int>({1, 2, 3}));
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniVectorMultiple", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlVectorMultiple", "[config]")
 //{
 //
-//    TempFile tmpini{"TestIniTmp.ini"};
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
 //
-//    app.set_config("--config", tmpini);
+//    app.set_config("--config", tmpYaml);
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "#this is a comment line\n";
 //        out << "[default]\n";
 //        out << "two=2\n";
@@ -1073,15 +1061,15 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(three == std::vector<int>({1, 2, 3}));
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniLayered", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlLayered", "[config]")
 //{
 //
-//    TempFile tmpini{"TestIniTmp.ini"};
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
 //
-//    app.set_config("--config", tmpini);
+//    app.set_config("--config", tmpYaml);
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "[default]" << std::endl;
 //        out << "val=1" << std::endl;
 //        out << "[subcom]" << std::endl;
@@ -1106,15 +1094,15 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(!*subcom);
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniLayeredStream", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlLayeredStream", "[config]")
 //{
 //
-//    TempFile tmpini{"TestIniTmp.ini"};
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
 //
-//    app.set_config("--config", tmpini);
+//    app.set_config("--config", tmpYaml);
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "[default]" << std::endl;
 //        out << "val=1" << std::endl;
 //        out << "[subcom]" << std::endl;
@@ -1129,7 +1117,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    auto* subsubcom = subcom->add_subcommand("subsubcom");
 //    subsubcom->add_option("--val", three);
 //
-//    std::ifstream in{tmpini};
+//    std::ifstream in{tmpYaml};
 //    app.parse_from_stream(in);
 //
 //    CHECK(one == 1);
@@ -1140,15 +1128,15 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(!*subcom);
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniLayeredDotSection", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlLayeredDotSection", "[config]")
 //{
 //
-//    TempFile tmpini{"TestIniTmp.ini"};
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
 //
-//    app.set_config("--config", tmpini);
+//    app.set_config("--config", tmpYaml);
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "[default]" << std::endl;
 //        out << "val=1" << std::endl;
 //        out << "[subcom]" << std::endl;
@@ -1180,15 +1168,15 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(three == 0);
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniLayeredCustomSectionSeparator", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlLayeredCustomSectionSeparator", "[config]")
 //{
 //
-//    TempFile tmpini{"TestIniTmp.ini"};
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
 //
-//    app.set_config("--config", tmpini);
+//    app.set_config("--config", tmpYaml);
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "[default]" << std::endl;
 //        out << "val=1" << std::endl;
 //        out << "[subcom]" << std::endl;
@@ -1214,15 +1202,15 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(!*subcom);
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniLayeredOptionGroupAlias", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlLayeredOptionGroupAlias", "[config]")
 //{
 //
-//    TempFile tmpini{"TestIniTmp.ini"};
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
 //
-//    app.set_config("--config", tmpini);
+//    app.set_config("--config", tmpYaml);
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "[default]" << std::endl;
 //        out << "val=1" << std::endl;
 //        out << "[ogroup]" << std::endl;
@@ -1239,15 +1227,15 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(two == 2);
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniSubcommandConfigurable", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlSubcommandConfigurable", "[config]")
 //{
 //
-//    TempFile tmpini{"TestIniTmp.ini"};
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
 //
-//    app.set_config("--config", tmpini);
+//    app.set_config("--config", tmpYaml);
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "[default]" << std::endl;
 //        out << "val=1" << std::endl;
 //        out << "[subcom]" << std::endl;
@@ -1274,15 +1262,15 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(app.got_subcommand(subcom));
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniSubcommandConfigurablePreParse", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlSubcommandConfigurablePreParse", "[config]")
 //{
 //
-//    TempFile tmpini{"TestIniTmp.ini"};
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
 //
-//    app.set_config("--config", tmpini);
+//    app.set_config("--config", tmpYaml);
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "[default]" << std::endl;
 //        out << "val=1" << std::endl;
 //        out << "[subcom]" << std::endl;
@@ -1316,16 +1304,16 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(0U == subcom2->count());
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniSection", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlSection", "[config]")
 //{
 //
-//    TempFile tmpini{"TestIniTmp.ini"};
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
 //
-//    app.set_config("--config", tmpini);
+//    app.set_config("--config", tmpYaml);
 //    app.get_config_formatter_base()->section("config");
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "[config]" << std::endl;
 //        out << "val=2" << std::endl;
 //        out << "subsubcom.val=3" << std::endl;
@@ -1341,16 +1329,16 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(2 == val);
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniSection2", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlSection2", "[config]")
 //{
 //
-//    TempFile tmpini{"TestIniTmp.ini"};
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
 //
-//    app.set_config("--config", tmpini);
+//    app.set_config("--config", tmpYaml);
 //    app.get_config_formatter_base()->section("config");
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "[default]" << std::endl;
 //        out << "val=1" << std::endl;
 //        out << "[config]" << std::endl;
@@ -1366,7 +1354,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(2 == val);
 //}
 //
-//TEST_CASE_METHOD(TApp, "jsonLikeParsing", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: jsonLikeParsing", "[config]")
 //{
 //
 //    TempFile tmpjson{"TestJsonTmp.json"};
@@ -1398,16 +1386,16 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(flag);
 //}
 //
-//TEST_CASE_METHOD(TApp, "TomlSectionNumber", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: TomlSectionNumber", "[config]")
 //{
 //
-//    TempFile tmpini{"TestTomlTmp.toml"};
+//    TempFile tmpYaml{"TestTomlTmp.toml"};
 //
-//    app.set_config("--config", tmpini);
+//    app.set_config("--config", tmpYaml);
 //    app.get_config_formatter_base()->section("config")->index(0);
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "[default]" << std::endl;
 //        out << "val=1" << std::endl;
 //        out << "[[config]]" << std::endl;
@@ -1444,15 +1432,15 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(6 == val);
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniSubcommandConfigurableParseComplete", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlSubcommandConfigurableParseComplete", "[config]")
 //{
 //
-//    TempFile tmpini{"TestIniTmp.ini"};
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
 //
-//    app.set_config("--config", tmpini);
+//    app.set_config("--config", tmpYaml);
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "[default]" << std::endl;
 //        out << "val=1" << std::endl;
 //        out << "[subcom]" << std::endl;
@@ -1490,15 +1478,15 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(0u == subcom2->count());
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniSubcommandMultipleSections", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlSubcommandMultipleSections", "[config]")
 //{
 //
-//    TempFile tmpini{"TestIniTmp.ini"};
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
 //
-//    app.set_config("--config", tmpini);
+//    app.set_config("--config", tmpYaml);
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "[default]" << std::endl;
 //        out << "val=1" << std::endl;
 //        out << "[subcom]" << std::endl;
@@ -1539,7 +1527,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(0u == subcom2->count());
 //}
 //
-//TEST_CASE_METHOD(TApp, "DuplicateSubcommandCallbacks", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: DuplicateSubcommandCallbacks", "[config]")
 //{
 //
 //    TempFile tmptoml{"TesttomlTmp.toml"};
@@ -1564,7 +1552,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(3 == count);
 //}
 //
-//TEST_CASE_METHOD(TApp, "SubcommandCallbackSingle", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: SubcommandCallbackSingle", "[config]")
 //{
 //
 //    TempFile tmptoml{"Testtomlcallback.toml"};
@@ -1584,15 +1572,15 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(1 == count);
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniFailure", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlFailure", "[config]")
 //{
 //
-//    TempFile tmpini{"TestIniTmp.ini"};
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
 //
-//    app.set_config("--config", tmpini);
+//    app.set_config("--config", tmpYaml);
 //    app.allow_config_extras(false);
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "[default]" << std::endl;
 //        out << "val=1" << std::endl;
 //    }
@@ -1600,17 +1588,17 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THROWS_AS(run(), CLI::ConfigError);
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniConfigurable", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlConfigurable", "[config]")
 //{
 //
-//    TempFile tmpini{"TestIniTmp.ini"};
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
 //
-//    app.set_config("--config", tmpini);
+//    app.set_config("--config", tmpYaml);
 //    bool value{false};
 //    app.add_flag("--val", value)->configurable(true);
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "[default]" << std::endl;
 //        out << "val=1" << std::endl;
 //    }
@@ -1619,17 +1607,17 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(value);
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniNotConfigurable", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlNotConfigurable", "[config]")
 //{
 //
-//    TempFile tmpini{"TestIniTmp.ini"};
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
 //
-//    app.set_config("--config", tmpini);
+//    app.set_config("--config", tmpYaml);
 //    bool value{false};
 //    app.add_flag("--val", value)->configurable(false);
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "[default]" << std::endl;
 //        out << "val=1" << std::endl;
 //    }
@@ -1637,16 +1625,16 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THROWS_AS(run(), CLI::ConfigError);
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniSubFailure", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlSubFailure", "[config]")
 //{
 //
-//    TempFile tmpini{"TestIniTmp.ini"};
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
 //
 //    app.add_subcommand("other");
-//    app.set_config("--config", tmpini);
+//    app.set_config("--config", tmpYaml);
 //    app.allow_config_extras(false);
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "[other]" << std::endl;
 //        out << "val=1" << std::endl;
 //    }
@@ -1654,15 +1642,15 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THROWS_AS(run(), CLI::ConfigError);
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniNoSubFailure", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlNoSubFailure", "[config]")
 //{
 //
-//    TempFile tmpini{"TestIniTmp.ini"};
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
 //
-//    app.set_config("--config", tmpini);
+//    app.set_config("--config", tmpYaml);
 //    app.allow_config_extras(CLI::config_extras_mode::error);
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "[other]" << std::endl;
 //        out << "val=1" << std::endl;
 //    }
@@ -1670,16 +1658,16 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THROWS_AS(run(), CLI::ConfigError);
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniFlagConvertFailure", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlFlagConvertFailure", "[config]")
 //{
 //
-//    TempFile tmpini{"TestIniTmp.ini"};
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
 //
 //    app.add_flag("--flag");
-//    app.set_config("--config", tmpini);
+//    app.set_config("--config", tmpYaml);
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "flag=moobook" << std::endl;
 //    }
 //    run();
@@ -1691,17 +1679,17 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK("moobook" == res);
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniFlagNumbers", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlFlagNumbers", "[config]")
 //{
 //
-//    TempFile tmpini{"TestIniTmp.ini"};
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
 //
 //    bool boo{false};
 //    app.add_flag("--flag", boo);
-//    app.set_config("--config", tmpini);
+//    app.set_config("--config", tmpYaml);
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "flag=3" << std::endl;
 //    }
 //
@@ -1709,35 +1697,35 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(boo);
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniFlagDual", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlFlagDual", "[config]")
 //{
 //
-//    TempFile tmpini{"TestIniTmp.ini"};
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
 //
 //    bool boo{false};
 //    app.config_formatter(std::make_shared<CLI::ConfigINI>());
 //    app.add_flag("--flag", boo);
-//    app.set_config("--config", tmpini);
+//    app.set_config("--config", tmpYaml);
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "flag=1 1" << std::endl;
 //    }
 //
 //    CHECK_THROWS_AS(run(), CLI::ConversionError);
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniShort", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlShort", "[config]")
 //{
 //
-//    TempFile tmpini{"TestIniTmp.ini"};
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
 //
 //    int key{0};
 //    app.add_option("--flag,-f", key);
-//    app.set_config("--config", tmpini);
+//    app.set_config("--config", tmpYaml);
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "f=3" << std::endl;
 //    }
 //
@@ -1745,17 +1733,17 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(3 == key);
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniDefaultPath", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlDefaultPath", "[config]")
 //{
 //
-//    TempFile tmpini{"../TestIniTmp.ini"};
+//    TempFile tmpYaml{"../TestIniTmp.ini"};
 //
 //    int key{0};
 //    app.add_option("--flag,-f", key);
 //    app.set_config("--config", "TestIniTmp.ini")->transform(CLI::FileOnDefaultPath("../"));
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "f=3" << std::endl;
 //    }
 //
@@ -1763,10 +1751,10 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(3 == key);
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniMultipleDefaultPath", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlMultipleDefaultPath", "[config]")
 //{
 //
-//    TempFile tmpini{"../TestIniTmp.ini"};
+//    TempFile tmpYaml{"../TestIniTmp.ini"};
 //
 //    int key{0};
 //    app.add_option("--flag,-f", key);
@@ -1775,7 +1763,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //            ->transform(CLI::FileOnDefaultPath("../other", false));
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "f=3" << std::endl;
 //    }
 //
@@ -1785,10 +1773,10 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(cfgOption->as<std::string>() == "../TestIniTmp.ini");
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniMultipleDefaultPathAlternate", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlMultipleDefaultPathAlternate", "[config]")
 //{
 //
-//    TempFile tmpini{"../TestIniTmp.ini"};
+//    TempFile tmpYaml{"../TestIniTmp.ini"};
 //
 //    int key{0};
 //    app.add_option("--flag,-f", key);
@@ -1796,7 +1784,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //            ->transform(CLI::FileOnDefaultPath("../other") | CLI::FileOnDefaultPath("../"));
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "f=3" << std::endl;
 //    }
 //
@@ -1806,17 +1794,17 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(cfgOption->as<std::string>() == "../TestIniTmp.ini");
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniPositional", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlPositional", "[config]")
 //{
 //
-//    TempFile tmpini{"TestIniTmp.ini"};
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
 //
 //    int key{0};
 //    app.add_option("key", key);
-//    app.set_config("--config", tmpini);
+//    app.set_config("--config", tmpYaml);
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "key=3" << std::endl;
 //    }
 //
@@ -1824,17 +1812,17 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(3 == key);
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniEnvironmental", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlEnvironmental", "[config]")
 //{
 //
-//    TempFile tmpini{"TestIniTmp.ini"};
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
 //
 //    int key{0};
 //    app.add_option("key", key)->envname("CLI11_TEST_ENV_KEY_TMP");
-//    app.set_config("--config", tmpini);
+//    app.set_config("--config", tmpYaml);
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "CLI11_TEST_ENV_KEY_TMP=3" << std::endl;
 //    }
 //
@@ -1842,20 +1830,20 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(3 == key);
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniFlagText", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlFlagText", "[config]")
 //{
 //
-//    TempFile tmpini{"TestIniTmp.ini"};
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
 //
 //    bool flag1{false}, flag2{false}, flag3{false}, flag4{false};
 //    app.add_flag("--flag1", flag1);
 //    app.add_flag("--flag2", flag2);
 //    app.add_flag("--flag3", flag3);
 //    app.add_flag("--flag4", flag4);
-//    app.set_config("--config", tmpini);
+//    app.set_config("--config", tmpYaml);
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "flag1=true" << std::endl;
 //        out << "flag2=on" << std::endl;
 //        out << "flag3=off" << std::endl;
@@ -1870,13 +1858,13 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(flag4);
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniFlags", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlFlags", "[config]")
 //{
-//    TempFile tmpini{"TestIniTmp.ini"};
-//    app.set_config("--config", tmpini);
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
+//    app.set_config("--config", tmpYaml);
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "[default]" << std::endl;
 //        out << "two=2" << std::endl;
 //        out << "three=true" << std::endl;
@@ -1899,13 +1887,13 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(five);
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniFalseFlags", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlFalseFlags", "[config]")
 //{
-//    TempFile tmpini{"TestIniTmp.ini"};
-//    app.set_config("--config", tmpini);
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
+//    app.set_config("--config", tmpYaml);
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "[default]" << std::endl;
 //        out << "two=-2" << std::endl;
 //        out << "three=false" << std::endl;
@@ -1928,13 +1916,13 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(five);
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniFalseFlagsDef", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlFalseFlagsDef", "[config]")
 //{
-//    TempFile tmpini{"TestIniTmp.ini"};
-//    app.set_config("--config", tmpini);
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
+//    app.set_config("--config", tmpYaml);
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "[default]" << std::endl;
 //        out << "two=2" << std::endl;
 //        out << "three=true" << std::endl;
@@ -1957,13 +1945,13 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(five);
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniFalseFlagsDefDisableOverrideError", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlFalseFlagsDefDisableOverrideError", "[config]")
 //{
-//    TempFile tmpini{"TestIniTmp.ini"};
-//    app.set_config("--config", tmpini);
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
+//    app.set_config("--config", tmpYaml);
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "[default]" << std::endl;
 //        out << "two=2" << std::endl;
 //        out << "four=on" << std::endl;
@@ -1979,13 +1967,13 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THROWS_AS(run(), CLI::ArgumentMismatch);
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniFalseFlagsDefDisableOverrideSuccess", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlFalseFlagsDefDisableOverrideSuccess", "[config]")
 //{
-//    TempFile tmpini{"TestIniTmp.ini"};
-//    app.set_config("--config", tmpini);
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
+//    app.set_config("--config", tmpYaml);
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "[default]" << std::endl;
 //        out << "two=2" << std::endl;
 //        out << "four={}" << std::endl;
@@ -2004,7 +1992,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(val == 15);
 //}
 //
-//TEST_CASE_METHOD(TApp, "TomlOutputSimple", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: TomlOutputSimple", "[config]")
 //{
 //
 //    int v{0};
@@ -2018,7 +2006,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(str == "simple=3\n");
 //}
 //
-//TEST_CASE_METHOD(TApp, "TomlOutputShort", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: TomlOutputShort", "[config]")
 //{
 //
 //    int v{0};
@@ -2032,7 +2020,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(str == "s=3\n");
 //}
 //
-//TEST_CASE_METHOD(TApp, "TomlOutputPositional", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: TomlOutputPositional", "[config]")
 //{
 //
 //    int v{0};
@@ -2047,7 +2035,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //}
 //
 //// try the output with environmental only arguments
-//TEST_CASE_METHOD(TApp, "TomlOutputEnvironmental", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: TomlOutputEnvironmental", "[config]")
 //{
 //
 //    put_env("CLI11_TEST_ENV_TMP", "2");
@@ -2064,7 +2052,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    unset_env("CLI11_TEST_ENV_TMP");
 //}
 //
-//TEST_CASE_METHOD(TApp, "TomlOutputNoConfigurable", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: TomlOutputNoConfigurable", "[config]")
 //{
 //
 //    int v1{0}, v2{0};
@@ -2079,7 +2067,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(str == "simple=3\n");
 //}
 //
-//TEST_CASE_METHOD(TApp, "TomlOutputShortSingleDescription", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: TomlOutputShortSingleDescription", "[config]")
 //{
 //    std::string flag = "some_flag";
 //    const std::string description = "Some short description.";
@@ -2091,7 +2079,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THAT(str, ContainsSubstring("# " + description + "\n" + flag + "=false\n"));
 //}
 //
-//TEST_CASE_METHOD(TApp, "TomlOutputShortDoubleDescription", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: TomlOutputShortDoubleDescription", "[config]")
 //{
 //    std::string flag1 = "flagnr1";
 //    std::string flag2 = "flagnr2";
@@ -2107,7 +2095,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THAT(str, ContainsSubstring(ans));
 //}
 //
-//TEST_CASE_METHOD(TApp, "TomlOutputGroups", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: TomlOutputGroups", "[config]")
 //{
 //    std::string flag1 = "flagnr1";
 //    std::string flag2 = "flagnr2";
@@ -2123,7 +2111,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THAT(str, ContainsSubstring("group2"));
 //}
 //
-//TEST_CASE_METHOD(TApp, "TomlOutputHiddenOptions", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: TomlOutputHiddenOptions", "[config]")
 //{
 //    std::string flag1 = "flagnr1";
 //    std::string flag2 = "flagnr2";
@@ -2148,7 +2136,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(std::string::npos == loc);
 //}
 //
-//TEST_CASE_METHOD(TApp, "TomlOutputAppMultiLineDescription", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: TomlOutputAppMultiLineDescription", "[config]")
 //{
 //    app.description("Some short app description.\n"
 //                    "That has multiple lines.");
@@ -2159,7 +2147,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THAT(str, ContainsSubstring("# That has multiple lines.\n"));
 //}
 //
-//TEST_CASE_METHOD(TApp, "TomlOutputMultiLineDescription", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: TomlOutputMultiLineDescription", "[config]")
 //{
 //    std::string flag = "some_flag";
 //    const std::string description = "Some short description.\nThat has lines.";
@@ -2173,7 +2161,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THAT(str, ContainsSubstring(flag + "=false\n"));
 //}
 //
-//TEST_CASE_METHOD(TApp, "TomlOutputOptionGroupMultiLineDescription", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: TomlOutputOptionGroupMultiLineDescription", "[config]")
 //{
 //    std::string flag = "flag";
 //    const std::string description = "Short flag description.\n";
@@ -2188,7 +2176,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THAT(str, ContainsSubstring("# That has multiple lines.\n"));
 //}
 //
-//TEST_CASE_METHOD(TApp, "TomlOutputSubcommandMultiLineDescription", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: TomlOutputSubcommandMultiLineDescription", "[config]")
 //{
 //    std::string flag = "flag";
 //    const std::string description = "Short flag description.\n";
@@ -2204,7 +2192,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THAT(str, ContainsSubstring("# That has multiple lines.\n"));
 //}
 //
-//TEST_CASE_METHOD(TApp, "TomlOutputOptionGroup", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: TomlOutputOptionGroup", "[config]")
 //{
 //    std::string flag1 = "flagnr1";
 //    std::string flag2 = "flagnr2";
@@ -2234,7 +2222,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(locg1 < locg3);
 //}
 //
-//TEST_CASE_METHOD(TApp, "TomlOutputVector", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: TomlOutputVector", "[config]")
 //{
 //
 //    std::vector<int> v;
@@ -2248,7 +2236,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(str == "vector=[1, 2, 3]\n");
 //}
 //
-//TEST_CASE_METHOD(TApp, "TomlOutputTuple", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: TomlOutputTuple", "[config]")
 //{
 //
 //    std::tuple<double, double, double, double> t;
@@ -2262,7 +2250,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(str == "tuple=[1, 2, 3, 4]\n");
 //}
 //
-//TEST_CASE_METHOD(TApp, "ConfigOutputVectorCustom", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: ConfigOutputVectorCustom", "[config]")
 //{
 //
 //    std::vector<int> v;
@@ -2278,7 +2266,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(str == "vector:{1; 2; 3}\n");
 //}
 //
-//TEST_CASE_METHOD(TApp, "TomlOutputFlag", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: TomlOutputFlag", "[config]")
 //{
 //
 //    int v{0}, q{0};
@@ -2301,7 +2289,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THAT(str, ContainsSubstring("nothing"));
 //}
 //
-//TEST_CASE_METHOD(TApp, "TomlOutputSet", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: TomlOutputSet", "[config]")
 //{
 //
 //    int v{0};
@@ -2315,7 +2303,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THAT(str, ContainsSubstring("simple=2"));
 //}
 //
-//TEST_CASE_METHOD(TApp, "TomlOutputDefault", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: TomlOutputDefault", "[config]")
 //{
 //
 //    int v{7};
@@ -2330,7 +2318,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THAT(str, ContainsSubstring("simple=7"));
 //}
 //
-//TEST_CASE_METHOD(TApp, "TomlOutputSubcom", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: TomlOutputSubcom", "[config]")
 //{
 //
 //    app.add_flag("--simple");
@@ -2345,7 +2333,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THAT(str, ContainsSubstring("other.newer=true"));
 //}
 //
-//TEST_CASE_METHOD(TApp, "TomlOutputSubcomConfigurable", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: TomlOutputSubcomConfigurable", "[config]")
 //{
 //
 //    app.add_flag("--simple");
@@ -2362,7 +2350,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(std::string::npos == str.find("other.newer=true"));
 //}
 //
-//TEST_CASE_METHOD(TApp, "TomlOutputSubsubcom", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: TomlOutputSubsubcom", "[config]")
 //{
 //
 //    app.add_flag("--simple");
@@ -2380,7 +2368,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THAT(str, ContainsSubstring("other.sub2.newest=true"));
 //}
 //
-//TEST_CASE_METHOD(TApp, "TomlOutputSubsubcomConfigurable", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: TomlOutputSubsubcomConfigurable", "[config]")
 //{
 //
 //    app.add_flag("--simple");
@@ -2402,7 +2390,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(std::string::npos == str.find("sub2.newest=true"));
 //}
 //
-//TEST_CASE_METHOD(TApp, "TomlOutputSubcomNonConfigurable", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: TomlOutputSubcomNonConfigurable", "[config]")
 //{
 //
 //    app.add_flag("--simple");
@@ -2424,7 +2412,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THAT(str, !ContainsSubstring("descriptor2"));
 //}
 //
-//TEST_CASE_METHOD(TApp, "TomlOutputSubsubcomConfigurableDeep", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: TomlOutputSubsubcomConfigurableDeep", "[config]")
 //{
 //
 //    app.add_flag("--simple");
@@ -2448,7 +2436,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(std::string::npos == str.find(".absolute_newest=true"));
 //}
 //
-//TEST_CASE_METHOD(TApp, "TomlOutputQuoted", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: TomlOutputQuoted", "[config]")
 //{
 //
 //    std::string val1;
@@ -2469,7 +2457,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THAT(str, ContainsSubstring("val2='I am a \"confusing\" string'"));
 //}
 //
-//TEST_CASE_METHOD(TApp, "DefaultsTomlOutputQuoted", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: DefaultsTomlOutputQuoted", "[config]")
 //{
 //
 //    std::string val1{"I am a string"};
@@ -2486,17 +2474,17 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //}
 //
 //// #298
-//TEST_CASE_METHOD(TApp, "StopReadingConfigOnClear", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: StopReadingConfigOnClear", "[config]")
 //{
 //
-//    TempFile tmpini{"TestIniTmp.ini"};
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
 //
-//    app.set_config("--config", tmpini);
+//    app.set_config("--config", tmpYaml);
 //    auto* ptr = app.set_config();  // Should *not* read config file
 //    CHECK(nullptr == ptr);
 //
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << "volume=1" << std::endl;
 //    }
 //
@@ -2508,10 +2496,10 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(0 == volume);
 //}
 //
-//TEST_CASE_METHOD(TApp, "ConfigWriteReadWrite", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: ConfigWriteReadWrite", "[config]")
 //{
 //
-//    TempFile tmpini{"TestIniTmp.ini"};
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
 //
 //    app.add_flag("--flag");
 //    run();
@@ -2519,11 +2507,11 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    // Save config, with default values too
 //    std::string config1 = app.config_to_str(true, true);
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << config1 << std::endl;
 //    }
 //
-//    app.set_config("--config", tmpini, "Read an ini file", true);
+//    app.set_config("--config", tmpYaml, "Read an ini file", true);
 //    run();
 //
 //    std::string config2 = app.config_to_str(true, true);
@@ -2531,10 +2519,10 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(config2 == config1);
 //}
 //
-//TEST_CASE_METHOD(TApp, "ConfigWriteReadNegated", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: ConfigWriteReadNegated", "[config]")
 //{
 //
-//    TempFile tmpini{"TestIniTmp.ini"};
+//    TempFile tmpYaml{"TestYamlTmp.yaml"};
 //    bool flag{true};
 //    app.add_flag("!--no-flag", flag);
 //    args = {"--no-flag"};
@@ -2543,13 +2531,13 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    // Save config, with default values too
 //    std::string config1 = app.config_to_str(false, false);
 //    {
-//        std::ofstream out{tmpini};
+//        std::ofstream out{tmpYaml};
 //        out << config1 << std::endl;
 //    }
 //    CHECK_FALSE(flag);
 //    args.clear();
 //    flag = true;
-//    app.set_config("--config", tmpini, "Read an ini file", true);
+//    app.set_config("--config", tmpYaml, "Read an ini file", true);
 //    run();
 //
 //    CHECK_FALSE(flag);
@@ -2557,7 +2545,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //
 ///////// INI output tests
 //
-//TEST_CASE_METHOD(TApp, "IniOutputSimple", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlOutputSimple", "[config]")
 //{
 //
 //    int v{0};
@@ -2571,7 +2559,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(str == "simple=3\n");
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniOutputNoConfigurable", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlOutputNoConfigurable", "[config]")
 //{
 //
 //    int v1{0}, v2{0};
@@ -2586,7 +2574,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(str == "simple=3\n");
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniOutputShortSingleDescription", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlOutputShortSingleDescription", "[config]")
 //{
 //    std::string flag = "some_flag";
 //    const std::string description = "Some short description.";
@@ -2598,7 +2586,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THAT(str, ContainsSubstring("; " + description + "\n" + flag + "=false\n"));
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniOutputShortDoubleDescription", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlOutputShortDoubleDescription", "[config]")
 //{
 //    std::string flag1 = "flagnr1";
 //    std::string flag2 = "flagnr2";
@@ -2614,7 +2602,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THAT(str, ContainsSubstring(ans));
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniOutputGroups", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlOutputGroups", "[config]")
 //{
 //    std::string flag1 = "flagnr1";
 //    std::string flag2 = "flagnr2";
@@ -2630,7 +2618,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THAT(str, ContainsSubstring("group2"));
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniOutputHiddenOptions", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlOutputHiddenOptions", "[config]")
 //{
 //    std::string flag1 = "flagnr1";
 //    std::string flag2 = "flagnr2";
@@ -2655,7 +2643,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(std::string::npos == loc);
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniOutputAppMultiLineDescription", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlOutputAppMultiLineDescription", "[config]")
 //{
 //    app.description("Some short app description.\n"
 //                    "That has multiple lines.");
@@ -2667,7 +2655,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THAT(str, ContainsSubstring("; That has multiple lines.\n"));
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniOutputMultiLineDescription", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlOutputMultiLineDescription", "[config]")
 //{
 //    std::string flag = "some_flag";
 //    const std::string description = "Some short description.\nThat has lines.";
@@ -2681,7 +2669,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THAT(str, ContainsSubstring(flag + "=false\n"));
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniOutputOptionGroupMultiLineDescription", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlOutputOptionGroupMultiLineDescription", "[config]")
 //{
 //    std::string flag = "flag";
 //    const std::string description = "Short flag description.\n";
@@ -2697,7 +2685,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THAT(str, ContainsSubstring("; That has multiple lines.\n"));
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniOutputSubcommandMultiLineDescription", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlOutputSubcommandMultiLineDescription", "[config]")
 //{
 //    std::string flag = "flag";
 //    const std::string description = "Short flag description.\n";
@@ -2714,7 +2702,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THAT(str, ContainsSubstring("; That has multiple lines.\n"));
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniOutputOptionGroup", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlOutputOptionGroup", "[config]")
 //{
 //    std::string flag1 = "flagnr1";
 //    std::string flag2 = "flagnr2";
@@ -2744,7 +2732,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(locg1 < locg3);
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniOutputVector", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlOutputVector", "[config]")
 //{
 //
 //    std::vector<int> v;
@@ -2758,7 +2746,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(str == "vector=1 2 3\n");
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniOutputFlag", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlOutputFlag", "[config]")
 //{
 //
 //    int v{0}, q{0};
@@ -2781,7 +2769,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THAT(str, ContainsSubstring("nothing"));
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniOutputSet", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlOutputSet", "[config]")
 //{
 //
 //    int v{0};
@@ -2795,7 +2783,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THAT(str, ContainsSubstring("simple=2"));
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniOutputDefault", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlOutputDefault", "[config]")
 //{
 //
 //    int v{7};
@@ -2810,7 +2798,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THAT(str, ContainsSubstring("simple=7"));
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniOutputSubcom", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlOutputSubcom", "[config]")
 //{
 //
 //    app.add_flag("--simple");
@@ -2825,7 +2813,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THAT(str, ContainsSubstring("other.newer=true"));
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniOutputSubcomCustomSep", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlOutputSubcomCustomSep", "[config]")
 //{
 //
 //    app.add_flag("--simple");
@@ -2841,7 +2829,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THAT(str, ContainsSubstring("other:newer=true"));
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniOutputSubcomConfigurable", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlOutputSubcomConfigurable", "[config]")
 //{
 //
 //    app.add_flag("--simple");
@@ -2858,7 +2846,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(std::string::npos == str.find("other.newer=true"));
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniOutputSubsubcom", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlOutputSubsubcom", "[config]")
 //{
 //
 //    app.add_flag("--simple");
@@ -2876,7 +2864,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THAT(str, ContainsSubstring("other.sub2.newest=true"));
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniOutputSubsubcomCustomSep", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlOutputSubsubcomCustomSep", "[config]")
 //{
 //
 //    app.add_flag("--simple");
@@ -2895,7 +2883,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THAT(str, ContainsSubstring("other|sub2|newest=true"));
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniOutputSubsubcomConfigurable", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlOutputSubsubcomConfigurable", "[config]")
 //{
 //
 //    app.add_flag("--simple");
@@ -2917,7 +2905,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(std::string::npos == str.find("sub2.newest=true"));
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniOutputSubsubcomConfigurableDeep", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlOutputSubsubcomConfigurableDeep", "[config]")
 //{
 //
 //    app.add_flag("--simple");
@@ -2941,7 +2929,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK(std::string::npos == str.find(".absolute_newest=true"));
 //}
 //
-//TEST_CASE_METHOD(TApp, "IniOutputQuoted", "[config]")
+//TEST_CASE_METHOD(TApp, "YamlOutputQuoted", "[config]")
 //{
 //
 //    std::string val1;
@@ -2962,7 +2950,7 @@ TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
 //    CHECK_THAT(str, ContainsSubstring("val2='I am a \"confusing\" string'"));
 //}
 //
-//TEST_CASE_METHOD(TApp, "DefaultsIniOutputQuoted", "[config]")
+//TEST_CASE_METHOD(TApp, "Yaml: DefaultsIniOutputQuoted", "[config]")
 //{
 //
 //    std::string val1{"I am a string"};
