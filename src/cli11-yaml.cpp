@@ -23,13 +23,13 @@ ConfigYAML::parse(const YAML::Node& node, std::vector<std::string> parents) cons
     switch (node.Type()) {
         case YAML::NodeType::Null: {
 
-            ConfigItem config_item;
-            config_item.name = (parents.empty() ? "" : *parents.rbegin());
-            config_item.parents = parents;
-            if (!config_item.parents.empty())
-                config_item.parents.erase(config_item.parents.rbegin().base());
-            config_item.inputs.emplace_back("true");
-            output.push_back(std::move(config_item));
+//            ConfigItem config_item;
+//            config_item.name = (parents.empty() ? "" : *parents.rbegin());
+//            config_item.parents = parents;
+//            if (!config_item.parents.empty())
+//                config_item.parents.erase(config_item.parents.rbegin().base());
+//            config_item.inputs.emplace_back("true");
+//            output.push_back(std::move(config_item));
 
             break;
         }
@@ -85,10 +85,15 @@ ConfigYAML::parse(const YAML::Node& node, std::vector<std::string> parents) cons
                     }
 
                     if (it->second.IsMap()) { // Only Map end a section (not a sequence)
-                        ConfigItem config_item_close;
-                        config_item_close.name = "--";
-                        config_item_close.parents = tmp;
-                        output.push_back(std::move(config_item_close));
+                        if (!output.empty() && output.rbegin()->name == "++") {
+                            output.pop_back();
+                        }
+                        else {
+                            ConfigItem config_item_close;
+                            config_item_close.name = "--";
+                            config_item_close.parents = tmp;
+                            output.push_back(std::move(config_item_close));
+                        }
                     }
                 }
             }

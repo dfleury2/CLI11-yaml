@@ -151,25 +151,20 @@ TEST_CASE("Yaml: StringBased: TomlVector", "[config]")
     CHECK(outputIni == outputYaml);
 }
 
-//TEST_CASE("Yaml: StringBased: Spaces", "[config]")
-//{
-//    std::stringstream ofile;
-//
-//    ofile << "one = three\n";
-//    ofile << "two = four";
-//
-//    ofile.seekg(0, std::ios::beg);
-//
-//    std::vector<CLI::ConfigItem> output = CLI::ConfigINI().from_config(ofile);
-//
-//    CHECK(output.size() == 2u);
-//    CHECK(output.at(0).name == "one");
-//    CHECK(output.at(0).inputs.size() == 1u);
-//    CHECK(output.at(0).inputs.at(0) == "three");
-//    CHECK(output.at(1).name == "two");
-//    CHECK(output.at(1).inputs.size() == 1u);
-//    CHECK(output.at(1).inputs.at(0) == "four");
-//}
+TEST_CASE("Yaml: StringBased: Spaces", "[config]")
+{
+    auto outputIni = CLI::ConfigINI().from_config(
+            Stream{"one = three\n"
+                   "two = four"
+            });
+
+    auto outputYaml = CLI::ConfigYAML().from_config(
+            Stream{"one : three\n"
+                   "two : four"
+            });
+
+    CHECK(outputIni == outputYaml);
+}
 
 TEST_CASE("Yaml: StringBased: Sections", "[config]")
 {
@@ -188,97 +183,73 @@ TEST_CASE("Yaml: StringBased: Sections", "[config]")
     CHECK(outputIni == outputYaml);
 }
 
-//TEST_CASE("Yaml: StringBased: SpacesSections", "[config]")
-//{
-//    std::stringstream ofile;
-//
-//    ofile << "one=three\n\n";
-//    ofile << "[second]   \n";
-//    ofile << "   \n";
-//    ofile << "  two=four\n";
-//
-//    ofile.seekg(0, std::ios::beg);
-//
-//    std::vector<CLI::ConfigItem> output = CLI::ConfigINI().from_config(ofile);
-//
-//    CHECK(output.size() == 4u);
-//    CHECK(output.at(0).name == "one");
-//    CHECK(output.at(0).inputs.size() == 1u);
-//    CHECK(output.at(0).inputs.at(0) == "three");
-//    CHECK(output.at(1).parents.at(0) == "second");
-//    CHECK(output.at(1).name == "++");
-//    CHECK(output.at(2).name == "two");
-//    CHECK(output.at(2).parents.size() == 1u);
-//    CHECK(output.at(2).parents.at(0) == "second");
-//    CHECK(output.at(2).inputs.size() == 1u);
-//    CHECK(output.at(2).inputs.at(0) == "four");
-//    CHECK(output.at(3).parents.at(0) == "second");
-//    CHECK(output.at(3).name == "--");
-//}
-//
-//// check function to make sure that open sections match close sections
-//bool checkSections(const std::vector<CLI::ConfigItem>& output)
-//{
-//    std::set<std::string> open;
-//    for (const auto& ci: output) {
-//        if (ci.name == "++") {
-//            auto nm = ci.fullname();
-//            nm.pop_back();
-//            nm.pop_back();
-//            auto rv = open.insert(nm);
-//            if (!rv.second) {
-//                return false;
-//            }
-//        }
-//        if (ci.name == "--") {
-//            auto nm = ci.fullname();
-//            nm.pop_back();
-//            nm.pop_back();
-//            auto rv = open.erase(nm);
-//            if (rv != 1U) {
-//                return false;
-//            }
-//        }
-//    }
-//    return open.empty();
-//}
-//
-//TEST_CASE("Yaml: StringBased: Layers", "[config]")
-//{
-//    std::stringstream ofile;
-//
-//    ofile << "simple = true\n\n";
-//    ofile << "[other]\n";
-//    ofile << "[other.sub2]\n";
-//    ofile << "[other.sub2.sub-level2]\n";
-//    ofile << "[other.sub2.sub-level2.sub-level3]\n";
-//    ofile << "absolute_newest = true\n";
-//    ofile.seekg(0, std::ios::beg);
-//
-//    std::vector<CLI::ConfigItem> output = CLI::ConfigINI().from_config(ofile);
-//
-//    // 2 flags and 4 openings and 4 closings
-//    CHECK(output.size() == 10u);
-//    CHECK(checkSections(output));
-//}
-//
-//TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
-//{
-//    std::stringstream ofile;
-//
-//    ofile << "simple = true\n\n";
-//    ofile << "[other.sub2]\n";
-//    ofile << "[other.sub2.sub-level2.sub-level3]\n";
-//    ofile << "absolute_newest = true\n";
-//    ofile.seekg(0, std::ios::beg);
-//
-//    std::vector<CLI::ConfigItem> output = CLI::ConfigINI().from_config(ofile);
-//
-//    // 2 flags and 4 openings and 4 closings
-//    CHECK(output.size() == 10u);
-//    CHECK(checkSections(output));
-//}
-//
+TEST_CASE("Yaml: StringBased: SpacesSections", "[config]")
+{
+    auto outputIni = CLI::ConfigINI().from_config(
+            Stream{"one=three\n\n"
+                   "[second]   \n"
+                   "   \n"
+                   "  two=four\n"
+            });
+
+    auto outputYaml = CLI::ConfigYAML().from_config(
+            Stream{"one: three\n\n"
+                   "second:   \n"
+                   "   \n"
+                   "  two: four\n"
+            });
+
+    CHECK(outputIni == outputYaml);
+}
+
+TEST_CASE("Yaml: StringBased: Layers", "[config]")
+{
+    auto outputIni = CLI::ConfigINI().from_config(
+            Stream{"simple = true\n\n"
+                   "[other]\n"
+                   "[other.sub2]\n"
+                   "[other.sub2.sub-level2]\n"
+                   "[other.sub2.sub-level2.sub-level3]\n"
+                   "absolute_newest = true\n"
+            });
+
+    auto outputYaml = CLI::ConfigYAML().from_config(
+            Stream{"simple: true\n\n"
+                   "other:\n"
+                   "  sub2:\n"
+                   "    sub-level2:\n"
+                   "      sub-level3:\n"
+                   "        absolute_newest: true\n"
+            });
+
+    // 2 flags and 4 openings and 4 closings
+    CHECK(outputIni == outputYaml);
+}
+
+TEST_CASE("Yaml: StringBased: LayersSkip", "[config]")
+{
+    auto outputIni = CLI::ConfigINI().from_config(
+            Stream{"simple = true\n\n"
+                   "[other.sub2]\n"
+                   "[other.sub2.sub-level2.sub-level3]\n"
+                   "absolute_newest = true\n"
+            });
+
+    auto outputYaml = CLI::ConfigYAML().from_config(
+            Stream{"simple : true\n\n"
+                   "other:\n"
+                   "  sub2:\n"
+                   "\n"
+                   "other:\n"
+                   "  sub2:\n"
+                   "    sub-level2:\n"
+                   "      sub-level3:\n"
+                   "        absolute_newest : true\n"
+            });
+
+    CHECK(outputIni == outputYaml);
+}
+
 //TEST_CASE("Yaml: StringBased: LayersSkipOrdered", "[config]")
 //{
 //    std::stringstream ofile;
