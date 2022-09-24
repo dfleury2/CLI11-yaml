@@ -574,267 +574,239 @@ TEST_CASE_METHOD(TApp, "YamlNotRequiredNotDefault", "[config]")
     CHECK(tmpYaml2.c_str() == app.get_config_ptr()->as<std::string>());
 }
 
-//TEST_CASE_METHOD(TApp, "Yaml: MultiConfig", "[config]")
-//{
-//
-//    TempFile tmpYaml{"TestYamlTmp.yaml"};
-//    TempFile tmpYaml2{"TestYamlTmp2.yaml"};
-//
-//    app.set_config("--config")->expected(1, 3);
-//
-//    {
-//        std::ofstream out{tmpYaml};
-//        out << "[default]" << std::endl;
-//        out << "two=99" << std::endl;
-//        out << "three=3" << std::endl;
-//    }
-//
-//    {
-//        std::ofstream out{tmpYaml2};
-//        out << "[default]" << std::endl;
-//        out << "one=55" << std::endl;
-//        out << "three=4" << std::endl;
-//    }
-//
-//    int one{0}, two{0}, three{0};
-//    app.add_option("--one", one);
-//    app.add_option("--two", two);
-//    app.add_option("--three", three);
-//
-//    args = {"--config", tmpYaml2, "--config", tmpYaml};
-//    run();
-//
-//    CHECK(two == 99);
-//    CHECK(three == 3);
-//    CHECK(one == 55);
-//
-//    args = {"--config", tmpYaml, "--config", tmpYaml2};
-//    run();
-//
-//    CHECK(two == 99);
-//    CHECK(three == 4);
-//    CHECK(one == 55);
-//}
-//
-//TEST_CASE_METHOD(TApp, "Yaml: MultiConfig_single", "[config]")
-//{
-//
-//    TempFile tmpYaml{"TestYamlTmp.yaml"};
-//    TempFile tmpYaml2{"TestYamlTmp2.yaml"};
-//
-//    app.set_config("--config")->multi_option_policy(CLI::MultiOptionPolicy::TakeLast);
-//
-//    {
-//        std::ofstream out{tmpYaml};
-//        out << "[default]" << std::endl;
-//        out << "two=99" << std::endl;
-//        out << "three=3" << std::endl;
-//    }
-//
-//    {
-//        std::ofstream out{tmpYaml2};
-//        out << "[default]" << std::endl;
-//        out << "one=55" << std::endl;
-//        out << "three=4" << std::endl;
-//    }
-//
-//    int one{0}, two{0}, three{0};
-//    app.add_option("--one", one);
-//    app.add_option("--two", two);
-//    app.add_option("--three", three);
-//
-//    args = {"--config", tmpYaml2, "--config", tmpYaml};
-//    run();
-//
-//    CHECK(two == 99);
-//    CHECK(three == 3);
-//    CHECK(one == 0);
-//
-//    two = 0;
-//    args = {"--config", tmpYaml, "--config", tmpYaml2};
-//    run();
-//
-//    CHECK(two == 0);
-//    CHECK(three == 4);
-//    CHECK(one == 55);
-//}
-//
-//TEST_CASE_METHOD(TApp, "YamlRequiredNotFound", "[config]")
-//{
-//
-//    std::string noini = "TestIniNotExist.ini";
-//    app.set_config("--config", noini, "", true);
-//
-//    CHECK_THROWS_AS(run(), CLI::FileError);
-//}
-//
-//TEST_CASE_METHOD(TApp, "YamlNotRequiredPassedNotFound", "[config]")
-//{
-//
-//    std::string noini = "TestIniNotExist.ini";
-//    app.set_config("--config", "", "", false);
-//
-//    args = {"--config", noini};
-//    CHECK_THROWS_AS(run(), CLI::FileError);
-//}
-//
-//TEST_CASE_METHOD(TApp, "YamlOverwrite", "[config]")
-//{
-//
-//    TempFile tmpYaml{"TestYamlTmp.yaml"};
-//    {
-//        std::ofstream out{tmpYaml};
-//        out << "[default]" << std::endl;
-//        out << "two=99" << std::endl;
-//    }
-//
-//    std::string orig = "filename_not_exist.ini";
-//    std::string next = "TestIniTmp.ini";
-//    app.set_config("--config", orig);
-//    // Make sure this can be overwritten
-//    app.set_config("--conf", next);
-//    int two{7};
-//    app.add_option("--two", two);
-//
-//    run();
-//
-//    CHECK(two == 99);
-//}
-//
-//TEST_CASE_METHOD(TApp, "YamlRequired", "[config]")
-//{
-//
-//    TempFile tmpYaml{"TestYamlTmp.yaml"};
-//
-//    app.set_config("--config", tmpYaml, "", true);
-//
-//    {
-//        std::ofstream out{tmpYaml};
-//        out << "[default]" << std::endl;
-//        out << "two=99" << std::endl;
-//        out << "three=3" << std::endl;
-//    }
-//
-//    int one{0}, two{0}, three{0};
-//    app.add_option("--one", one)->required();
-//    app.add_option("--two", two)->required();
-//    app.add_option("--three", three)->required();
-//
-//    args = {"--one=1"};
-//
-//    run();
-//    CHECK(1 == one);
-//    CHECK(99 == two);
-//    CHECK(3 == three);
-//
-//    one = two = three = 0;
-//    args = {"--one=1", "--two=2"};
-//
-//    CHECK_NOTHROW(run());
-//    CHECK(1 == one);
-//    CHECK(2 == two);
-//    CHECK(3 == three);
-//
-//    args = {};
-//
-//    CHECK_THROWS_AS(run(), CLI::RequiredError);
-//
-//    args = {"--two=2"};
-//
-//    CHECK_THROWS_AS(run(), CLI::RequiredError);
-//}
-//
-//TEST_CASE_METHOD(TApp, "YamlInlineComment", "[config]")
-//{
-//
-//    TempFile tmpYaml{"TestYamlTmp.yaml"};
-//
-//    app.set_config("--config", tmpYaml, "", true);
-//    app.config_formatter(std::make_shared<CLI::ConfigINI>());
-//
-//    {
-//        std::ofstream out{tmpYaml};
-//        out << "[default]" << std::endl;
-//        out << "two=99 ; this is a two" << std::endl;
-//        out << "three=3; this is a three" << std::endl;
-//    }
-//
-//    int one{0}, two{0}, three{0};
-//    app.add_option("--one", one)->required();
-//    app.add_option("--two", two)->required();
-//    app.add_option("--three", three)->required();
-//
-//    args = {"--one=1"};
-//
-//    run();
-//    CHECK(1 == one);
-//    CHECK(99 == two);
-//    CHECK(3 == three);
-//
-//    one = two = three = 0;
-//    args = {"--one=1", "--two=2"};
-//
-//    CHECK_NOTHROW(run());
-//    CHECK(1 == one);
-//    CHECK(2 == two);
-//    CHECK(3 == three);
-//
-//    args = {};
-//
-//    CHECK_THROWS_AS(run(), CLI::RequiredError);
-//
-//    args = {"--two=2"};
-//
-//    CHECK_THROWS_AS(run(), CLI::RequiredError);
-//}
-//
-//TEST_CASE_METHOD(TApp, "Yaml: TomlInlineComment", "[config]")
-//{
-//
-//    TempFile tmpYaml{"TestYamlTmp.yaml"};
-//
-//    app.set_config("--config", tmpYaml, "", true);
-//
-//    {
-//        std::ofstream out{tmpYaml};
-//        out << "[default]" << std::endl;
-//        out << "two=99 # this is a two" << std::endl;
-//        out << "three=3# this is a three" << std::endl;
-//    }
-//
-//    int one{0}, two{0}, three{0};
-//    app.add_option("--one", one)->required();
-//    app.add_option("--two", two)->required();
-//    app.add_option("--three", three)->required();
-//
-//    args = {"--one=1"};
-//
-//    run();
-//    CHECK(1 == one);
-//    CHECK(99 == two);
-//    CHECK(3 == three);
-//
-//    one = two = three = 0;
-//    args = {"--one=1", "--two=2"};
-//
-//    CHECK_NOTHROW(run());
-//    CHECK(1 == one);
-//    CHECK(2 == two);
-//    CHECK(3 == three);
-//
-//    args = {};
-//
-//    CHECK_THROWS_AS(run(), CLI::RequiredError);
-//
-//    args = {"--two=2"};
-//
-//    CHECK_THROWS_AS(run(), CLI::RequiredError);
-//}
-//
+TEST_CASE_METHOD(TApp, "Yaml: MultiConfig", "[config]")
+{
+    TempFile tmpYaml{"TestYamlTmp.yaml"};
+    TempFile tmpYaml2{"TestYamlTmp2.yaml"};
+
+    app.set_config("--config")->expected(1, 3);
+    app.config_formatter(std::make_shared<CLI::ConfigYAML>());
+
+    {
+        std::ofstream out{tmpYaml};
+        out << "two: 99" << std::endl;
+        out << "three: 3" << std::endl;
+    }
+
+    {
+        std::ofstream out{tmpYaml2};
+        out << "one: 55" << std::endl;
+        out << "three: 4" << std::endl;
+    }
+
+    int one{0}, two{0}, three{0};
+    app.add_option("--one", one);
+    app.add_option("--two", two);
+    app.add_option("--three", three);
+
+    args = {"--config", tmpYaml2, "--config", tmpYaml};
+    run();
+
+    CHECK(two == 99);
+    CHECK(three == 3);
+    CHECK(one == 55);
+
+    args = {"--config", tmpYaml, "--config", tmpYaml2};
+    run();
+
+    CHECK(two == 99);
+    CHECK(three == 4);
+    CHECK(one == 55);
+}
+
+TEST_CASE_METHOD(TApp, "Yaml: MultiConfig_single", "[config]")
+{
+    TempFile tmpYaml{"TestYamlTmp.yaml"};
+    TempFile tmpYaml2{"TestYamlTmp2.yaml"};
+
+    app.set_config("--config")->multi_option_policy(CLI::MultiOptionPolicy::TakeLast);
+    app.config_formatter(std::make_shared<CLI::ConfigYAML>());
+
+    {
+        std::ofstream out{tmpYaml};
+        out << "two: 99" << std::endl;
+        out << "three: 3" << std::endl;
+    }
+
+    {
+        std::ofstream out{tmpYaml2};
+        out << "one: 55" << std::endl;
+        out << "three: 4" << std::endl;
+    }
+
+    int one{0}, two{0}, three{0};
+    app.add_option("--one", one);
+    app.add_option("--two", two);
+    app.add_option("--three", three);
+
+    args = {"--config", tmpYaml2, "--config", tmpYaml};
+    run();
+
+    CHECK(two == 99);
+    CHECK(three == 3);
+    CHECK(one == 0);
+
+    two = 0;
+    args = {"--config", tmpYaml, "--config", tmpYaml2};
+    run();
+
+    CHECK(two == 0);
+    CHECK(three == 4);
+    CHECK(one == 55);
+}
+
+TEST_CASE_METHOD(TApp, "YamlOverwrite", "[config]")
+{
+    TempFile tmpYaml{"TestYamlTmp.yaml"};
+    {
+        std::ofstream out{tmpYaml};
+        out << "two: 99" << std::endl;
+    }
+
+    std::string orig = "filename_not_exist.yaml";
+    std::string next = "TestYamlTmp.yaml";
+    app.set_config("--config", orig);
+    app.config_formatter(std::make_shared<CLI::ConfigYAML>());
+    // Make sure this can be overwritten
+    app.set_config("--conf", next);
+    int two{7};
+    app.add_option("--two", two);
+
+    run();
+
+    CHECK(two == 99);
+}
+
+TEST_CASE_METHOD(TApp, "YamlRequired", "[config]")
+{
+    TempFile tmpYaml{"TestYamlTmp.yaml"};
+
+    app.set_config("--config", tmpYaml, "", true);
+    app.config_formatter(std::make_shared<CLI::ConfigYAML>());
+
+    {
+        std::ofstream out{tmpYaml};
+        out << "two: 99" << std::endl;
+        out << "three: 3" << std::endl;
+    }
+
+    int one{0}, two{0}, three{0};
+    app.add_option("--one", one)->required();
+    app.add_option("--two", two)->required();
+    app.add_option("--three", three)->required();
+
+    args = {"--one=1"};
+
+    run();
+    CHECK(1 == one);
+    CHECK(99 == two);
+    CHECK(3 == three);
+
+    one = two = three = 0;
+    args = {"--one=1", "--two=2"};
+
+    CHECK_NOTHROW(run());
+    CHECK(1 == one);
+    CHECK(2 == two);
+    CHECK(3 == three);
+
+    args = {};
+
+    CHECK_THROWS_AS(run(), CLI::RequiredError);
+
+    args = {"--two=2"};
+
+    CHECK_THROWS_AS(run(), CLI::RequiredError);
+}
+
+TEST_CASE_METHOD(TApp, "YamlInlineComment", "[config]")
+{
+    TempFile tmpYaml{"TestYamlTmp.yaml"};
+
+    app.set_config("--config", tmpYaml, "", true);
+    app.config_formatter(std::make_shared<CLI::ConfigYAML>());
+
+    {
+        std::ofstream out{tmpYaml};
+        out << "two: 99 # this is a two" << std::endl;
+        out << "three: 3 # this is a three" << std::endl;
+    }
+
+    int one{0}, two{0}, three{0};
+    app.add_option("--one", one)->required();
+    app.add_option("--two", two)->required();
+    app.add_option("--three", three)->required();
+
+    args = {"--one=1"};
+
+    run();
+    CHECK(1 == one);
+    CHECK(99 == two);
+    CHECK(3 == three);
+
+    one = two = three = 0;
+    args = {"--one=1", "--two=2"};
+
+    CHECK_NOTHROW(run());
+    CHECK(1 == one);
+    CHECK(2 == two);
+    CHECK(3 == three);
+
+    args = {};
+
+    CHECK_THROWS_AS(run(), CLI::RequiredError);
+
+    args = {"--two=2"};
+
+    CHECK_THROWS_AS(run(), CLI::RequiredError);
+}
+
+TEST_CASE_METHOD(TApp, "Yaml: TomlInlineComment", "[config]")
+{
+    TempFile tmpYaml{"TestYamlTmp.yaml"};
+
+    app.set_config("--config", tmpYaml, "", true);
+    app.config_formatter(std::make_shared<CLI::ConfigYAML>());
+
+    {
+        std::ofstream out{tmpYaml};
+        out << "two: 99 # this is a two" << std::endl;
+        out << "three: 3 # this is a three" << std::endl;
+    }
+
+    int one{0}, two{0}, three{0};
+    app.add_option("--one", one)->required();
+    app.add_option("--two", two)->required();
+    app.add_option("--three", three)->required();
+
+    args = {"--one=1"};
+
+    run();
+    CHECK(1 == one);
+    CHECK(99 == two);
+    CHECK(3 == three);
+
+    one = two = three = 0;
+    args = {"--one=1", "--two=2"};
+
+    CHECK_NOTHROW(run());
+    CHECK(1 == one);
+    CHECK(2 == two);
+    CHECK(3 == three);
+
+    args = {};
+
+    CHECK_THROWS_AS(run(), CLI::RequiredError);
+
+    args = {"--two=2"};
+
+    CHECK_THROWS_AS(run(), CLI::RequiredError);
+}
+
 //TEST_CASE_METHOD(TApp, "Yaml: ConfigModifiers", "[config]")
 //{
-//
-//    app.set_config("--config", "test.ini", "", true);
+//    app.set_config("--config", "test.yaml", "", true);
+//    app.config_formatter(std::make_shared<CLI::ConfigYAML>());
 //
 //    auto cfgptr = app.get_config_formatter_base();
 //
@@ -854,246 +826,192 @@ TEST_CASE_METHOD(TApp, "YamlNotRequiredNotDefault", "[config]")
 //    iref = 7;
 //    CHECK(cfgptr->index() == 7);
 //}
-//
-//TEST_CASE_METHOD(TApp, "YamlVector", "[config]")
-//{
-//
-//    TempFile tmpYaml{"TestYamlTmp.yaml"};
-//
-//    app.set_config("--config", tmpYaml);
-//
-//    {
-//        std::ofstream out{tmpYaml};
-//        out << "[default]" << std::endl;
-//        out << "two=2 3" << std::endl;
-//        out << "three=1 2 3" << std::endl;
-//    }
-//
-//    std::vector<int> two, three;
-//    app.add_option("--two", two)->expected(2)->required();
-//    app.add_option("--three", three)->required();
-//
-//    run();
-//
-//    CHECK(two == std::vector<int>({2, 3}));
-//    CHECK(three == std::vector<int>({1, 2, 3}));
-//}
-//
-//TEST_CASE_METHOD(TApp, "Yaml: TOMLVector", "[config]")
-//{
-//
-//    TempFile tmptoml{"TestTomlTmp.toml"};
-//
-//    app.set_config("--config", tmptoml);
-//
-//    {
-//        std::ofstream out{tmptoml};
-//        out << "#this is a comment line\n";
-//        out << "[default]\n";
-//        out << "two=[2,3]\n";
-//        out << "three=[1,2,3]\n";
-//    }
-//
-//    std::vector<int> two, three;
-//    app.add_option("--two", two)->expected(2)->required();
-//    app.add_option("--three", three)->required();
-//
-//    run();
-//
-//    CHECK(two == std::vector<int>({2, 3}));
-//    CHECK(three == std::vector<int>({1, 2, 3}));
-//}
-//
-//TEST_CASE_METHOD(TApp, "Yaml: ColonValueSep", "[config]")
-//{
-//
-//    TempFile tmpYaml{"TestYamlTmp.yaml"};
-//
-//    app.set_config("--config", tmpYaml);
-//
-//    {
-//        std::ofstream out{tmpYaml};
-//        out << "#this is a comment line\n";
-//        out << "[default]\n";
-//        out << "two:2\n";
-//        out << "three:3\n";
-//    }
-//
-//    int two{0}, three{0};
-//    app.add_option("--two", two);
-//    app.add_option("--three", three);
-//
-//    app.get_config_formatter_base()->valueSeparator(':');
-//
-//    run();
-//
-//    CHECK(two == 2);
-//    CHECK(three == 3);
-//}
-//
-//TEST_CASE_METHOD(TApp, "Yaml: TOMLVectordirect", "[config]")
-//{
-//
-//    TempFile tmpYaml{"TestYamlTmp.yaml"};
-//
-//    app.set_config("--config", tmpYaml);
-//
-//    app.config_formatter(std::make_shared<CLI::ConfigTOML>());
-//
-//    {
-//        std::ofstream out{tmpYaml};
-//        out << "#this is a comment line\n";
-//        out << "[default]\n";
-//        out << "two=[2,3]\n";
-//        out << "three=[1,2,3]\n";
-//    }
-//
-//    std::vector<int> two, three;
-//    app.add_option("--two", two)->expected(2)->required();
-//    app.add_option("--three", three)->required();
-//
-//    run();
-//
-//    CHECK(two == std::vector<int>({2, 3}));
-//    CHECK(three == std::vector<int>({1, 2, 3}));
-//}
-//
-//TEST_CASE_METHOD(TApp, "Yaml: TOMLStringVector", "[config]")
-//{
-//
-//    TempFile tmptoml{"TestTomlTmp.toml"};
-//
-//    app.set_config("--config", tmptoml);
-//
-//    {
-//        std::ofstream out{tmptoml};
-//        out << "#this is a comment line\n";
-//        out << "[default]\n";
-//        out << "zero1=[]\n";
-//        out << "zero2={}\n";
-//        out << "zero3={}\n";
-//        out << "nzero={}\n";
-//        out << "one=[\"1\"]\n";
-//        out << "two=[\"2\",\"3\"]\n";
-//        out << "three=[\"1\",\"2\",\"3\"]\n";
-//    }
-//
-//    std::vector<std::string> nzero, zero1, zero2, zero3, one, two, three;
-//    app.add_option("--zero1", zero1)->required()->expected(0, 99)->default_str("{}");
-//    app.add_option("--zero2", zero2)->required()->expected(0, 99)->default_val(std::vector<std::string>{});
-//    // if no default is specified the argument results in an empty string
-//    app.add_option("--zero3", zero3)->required()->expected(0, 99);
-//    app.add_option("--nzero", nzero)->required();
-//    app.add_option("--one", one)->required();
-//    app.add_option("--two", two)->required();
-//    app.add_option("--three", three)->required();
-//
-//    run();
-//
-//    CHECK(zero1 == std::vector<std::string>({}));
-//    CHECK(zero2 == std::vector<std::string>({}));
-//    CHECK(zero3 == std::vector<std::string>({""}));
-//    CHECK(nzero == std::vector<std::string>({"{}"}));
-//    CHECK(one == std::vector<std::string>({"1"}));
-//    CHECK(two == std::vector<std::string>({"2", "3"}));
-//    CHECK(three == std::vector<std::string>({"1", "2", "3"}));
-//}
-//
-//TEST_CASE_METHOD(TApp, "YamlVectorCsep", "[config]")
-//{
-//
-//    TempFile tmpYaml{"TestYamlTmp.yaml"};
-//
-//    app.set_config("--config", tmpYaml);
-//
-//    {
-//        std::ofstream out{tmpYaml};
-//        out << "#this is a comment line\n";
-//        out << "[default]\n";
-//        out << "zero1=[]\n";
-//        out << "zero2=[]\n";
-//        out << "one=[1]\n";
-//        out << "two=[2,3]\n";
-//        out << "three=1,2,3\n";
-//    }
-//
-//    std::vector<int> zero1, zero2, one, two, three;
-//    app.add_option("--zero1", zero1)->required()->expected(0, 99)->default_str("{}");
-//    app.add_option("--zero2", zero2)->required()->expected(0, 99)->default_val(std::vector<int>{});
-//    app.add_option("--one", one)->required();
-//    app.add_option("--two", two)->expected(2)->required();
-//    app.add_option("--three", three)->required();
-//
-//    run();
-//
-//    CHECK(zero1 == std::vector<int>({}));
-//    CHECK(zero2 == std::vector<int>({}));
-//    CHECK(one == std::vector<int>({1}));
-//    CHECK(two == std::vector<int>({2, 3}));
-//    CHECK(three == std::vector<int>({1, 2, 3}));
-//}
-//
-//TEST_CASE_METHOD(TApp, "YamlVectorMultiple", "[config]")
-//{
-//
-//    TempFile tmpYaml{"TestYamlTmp.yaml"};
-//
-//    app.set_config("--config", tmpYaml);
-//
-//    {
-//        std::ofstream out{tmpYaml};
-//        out << "#this is a comment line\n";
-//        out << "[default]\n";
-//        out << "two=2\n";
-//        out << "two=3\n";
-//        out << "three=1\n";
-//        out << "three=2\n";
-//        out << "three=3\n";
-//    }
-//
-//    std::vector<int> two, three;
-//    app.add_option("--two", two)->expected(2)->required();
-//    app.add_option("--three", three)->required();
-//
-//    run();
-//
-//    CHECK(two == std::vector<int>({2, 3}));
-//    CHECK(three == std::vector<int>({1, 2, 3}));
-//}
-//
-//TEST_CASE_METHOD(TApp, "YamlLayered", "[config]")
-//{
-//
-//    TempFile tmpYaml{"TestYamlTmp.yaml"};
-//
-//    app.set_config("--config", tmpYaml);
-//
-//    {
-//        std::ofstream out{tmpYaml};
-//        out << "[default]" << std::endl;
-//        out << "val=1" << std::endl;
-//        out << "[subcom]" << std::endl;
-//        out << "val=2" << std::endl;
-//        out << "subsubcom.val=3" << std::endl;
-//    }
-//
-//    int one{0}, two{0}, three{0};
-//    app.add_option("--val", one);
-//    auto* subcom = app.add_subcommand("subcom");
-//    subcom->add_option("--val", two);
-//    auto* subsubcom = subcom->add_subcommand("subsubcom");
-//    subsubcom->add_option("--val", three);
-//
-//    run();
-//
-//    CHECK(one == 1);
-//    CHECK(two == 2);
-//    CHECK(three == 3);
-//
-//    CHECK(0U == subcom->count());
-//    CHECK(!*subcom);
-//}
-//
+
+TEST_CASE_METHOD(TApp, "YamlVector", "[config]")
+{
+    TempFile tmpYaml{"TestYamlTmp.yaml"};
+
+    app.set_config("--config", tmpYaml);
+    app.config_formatter(std::make_shared<CLI::ConfigYAML>());
+
+    {
+        std::ofstream out{tmpYaml};
+        out << "#this is a comment line\n";
+        out << "two: [2, 3]" << std::endl;
+        out << "three: [1, 2,  3]" << std::endl;
+    }
+
+    std::vector<int> two, three;
+    app.add_option("--two", two)->expected(2)->required();
+    app.add_option("--three", three)->required();
+
+    run();
+
+    CHECK(two == std::vector<int>({2, 3}));
+    CHECK(three == std::vector<int>({1, 2, 3}));
+}
+
+TEST_CASE_METHOD(TApp, "YamlVectordirect", "[config]")
+{
+    TempFile tmpYaml{"TestYamlTmp.yaml"};
+
+    app.set_config("--config", tmpYaml);
+    app.config_formatter(std::make_shared<CLI::ConfigYAML>());
+
+    {
+        std::ofstream out{tmpYaml};
+        out << "#this is a comment line\n";
+        out << "two: [2, 3]\n";
+        out << "three: [1, 2, 3]\n";
+    }
+
+    std::vector<int> two, three;
+    app.add_option("--two", two)->expected(2)->required();
+    app.add_option("--three", three)->required();
+
+    run();
+
+    CHECK(two == std::vector<int>({2, 3}));
+    CHECK(three == std::vector<int>({1, 2, 3}));
+}
+
+TEST_CASE_METHOD(TApp, "YamlStringVector", "[config]")
+{
+
+    TempFile tmptoml{"TestYamlTmp.yaml"};
+
+    app.set_config("--config", tmptoml);
+    app.config_formatter(std::make_shared<CLI::ConfigYAML>());
+
+    {
+        std::ofstream out{tmptoml};
+        out << "#this is a comment line\n";
+        out << "zero1: []\n";
+        out << "zero2: []\n";
+        out << "zero3: []\n";
+        out << "nzero: [\"{}\"]\n";
+        out << "one: [\"1\"]\n";
+        out << "two: [\"2\",\"3\"]\n";
+        out << "three: [\"1\",\"2\",\"3\"]\n";
+    }
+
+    std::vector<std::string> nzero, zero1, zero2, zero3, one, two, three;
+    app.add_option("--zero1", zero1)->required()->expected(0, 99)->default_str("{}");
+    app.add_option("--zero2", zero2)->required()->expected(0, 99)->default_val(std::vector<std::string>{});
+    // if no default is specified the argument results in an empty string
+    app.add_option("--zero3", zero3)->required()->expected(0, 99);
+    app.add_option("--nzero", nzero)->required();
+    app.add_option("--one", one)->required();
+    app.add_option("--two", two)->required();
+    app.add_option("--three", three)->required();
+
+    run();
+
+    CHECK(zero1 == std::vector<std::string>({}));
+    CHECK(zero2 == std::vector<std::string>({}));
+    CHECK(zero3 == std::vector<std::string>({""}));
+    CHECK(nzero == std::vector<std::string>({"{}"}));
+    CHECK(one == std::vector<std::string>({"1"}));
+    CHECK(two == std::vector<std::string>({"2", "3"}));
+    CHECK(three == std::vector<std::string>({"1", "2", "3"}));
+}
+
+TEST_CASE_METHOD(TApp, "YamlVectorCsep", "[config]")
+{
+    TempFile tmpYaml{"TestYamlTmp.yaml"};
+
+    app.set_config("--config", tmpYaml);
+    app.config_formatter(std::make_shared<CLI::ConfigYAML>());
+
+    {
+        std::ofstream out{tmpYaml};
+        out << "#this is a comment line\n";
+        out << "zero1: []\n";
+        out << "zero2: []\n";
+        out << "one: [1]\n";
+        out << "two: [2,3]\n";
+        out << "three: [1,2,3]\n";
+    }
+
+    std::vector<int> zero1, zero2, one, two, three;
+    app.add_option("--zero1", zero1)->required()->expected(0, 99)->default_str("{}");
+    app.add_option("--zero2", zero2)->required()->expected(0, 99)->default_val(std::vector<int>{});
+    app.add_option("--one", one)->required();
+    app.add_option("--two", two)->expected(2)->required();
+    app.add_option("--three", three)->required();
+
+    run();
+
+    CHECK(zero1 == std::vector<int>({}));
+    CHECK(zero2 == std::vector<int>({}));
+    CHECK(one == std::vector<int>({1}));
+    CHECK(two == std::vector<int>({2, 3}));
+    CHECK(three == std::vector<int>({1, 2, 3}));
+}
+
+TEST_CASE_METHOD(TApp, "YamlVectorMultiple", "[config]")
+{
+    TempFile tmpYaml{"TestYamlTmp.yaml"};
+
+    app.set_config("--config", tmpYaml);
+    app.config_formatter(std::make_shared<CLI::ConfigYAML>());
+
+    {
+        std::ofstream out{tmpYaml};
+        out << "#this is a comment line\n";
+        out << "two:\n";
+        out << "  - 2\n";
+        out << "  - 3\n";
+        out << "three:\n";
+        out << "  - 1\n";
+        out << "  - 2\n";
+        out << "  - 3\n";
+    }
+
+    std::vector<int> two, three;
+    app.add_option("--two", two)->expected(2)->required();
+    app.add_option("--three", three)->required();
+
+    run();
+
+    CHECK(two == std::vector<int>({2, 3}));
+    CHECK(three == std::vector<int>({1, 2, 3}));
+}
+
+TEST_CASE_METHOD(TApp, "YamlLayered", "[config]")
+{
+
+    TempFile tmpYaml{"TestYamlTmp.yaml"};
+
+    app.set_config("--config", tmpYaml);
+    app.config_formatter(std::make_shared<CLI::ConfigYAML>());
+
+    {
+        std::ofstream out{tmpYaml};
+        out << "val: 1" << std::endl;
+        out << "subcom:" << std::endl;
+        out << "  val: 2" << std::endl;
+        out << "  subsubcom:" << std::endl;
+        out << "    val: 3" << std::endl;
+    }
+
+    int one{0}, two{0}, three{0};
+    app.add_option("--val", one);
+    auto* subcom = app.add_subcommand("subcom");
+    subcom->add_option("--val", two);
+    auto* subsubcom = subcom->add_subcommand("subsubcom");
+    subsubcom->add_option("--val", three);
+
+    run();
+
+    CHECK(one == 1);
+    CHECK(two == 2);
+    CHECK(three == 3);
+
+    CHECK(0U == subcom->count());
+    CHECK(!*subcom);
+}
+
 //TEST_CASE_METHOD(TApp, "YamlLayeredStream", "[config]")
 //{
 //
